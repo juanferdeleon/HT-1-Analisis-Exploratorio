@@ -9,10 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r include=FALSE}
+dataframe = read.csv("./Data/tmdb-movies.csv")
+```
+
 ## Ejercicios
 
 1. Haga una exploración rápida de sus datos, para eso haga un resumen de su conjunto de datos.
 2. Diga el tipo de cada una de las variables (cualitativa ordinal o nominal, cuantitativa continua, cuantitativa discreta).
+```{r echo=FALSE}
+data.frame("Variable"=c(colnames(dataframe)), "Tipo de Variable"=c("N/A", "N/A", "Cuantitativa Continua", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Continua", "Cuantitativa Discreta", "Cuantitativa Continua", "Cuantitativa Continua"))
+```
 3. Investigue si las variables cuantitativas siguen una distribución normal y haga una tabla de frecuencias de las variables cualitativas. Explique todos los resultados.
 4. Responda las siguientes preguntas:
     - ¿Cuáles son las 10 películas que contaron con más presupuesto?
