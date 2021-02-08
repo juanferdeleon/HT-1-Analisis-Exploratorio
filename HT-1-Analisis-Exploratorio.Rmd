@@ -23,9 +23,24 @@ data.frame("Variable"=c(colnames(dataframe)), "Tipo de Variable"=c("N/A", "N/A",
 3. Investigue si las variables cuantitativas siguen una distribución normal y haga una tabla de frecuencias de las variables cualitativas. Explique todos los resultados.
 4. Responda las siguientes preguntas:
     - ¿Cuáles son las 10 películas que contaron con más presupuesto?
+    ```{r echo=FALSE, include=FALSE}
+    library(dplyr)
+    ```
+    ```{r echo=FALSE}
+    head(dataframe[order(-dataframe$budget),], 10)[, c("id", "original_title", "budget"), drop=FALSE]
+    ```
     - ¿Cuáles son las 10 películas que más ingresos tuvieron?
+    ```{r echo=FALSE}
+    head(dataframe[order(-dataframe$revenue),], 10)[, c("id", "original_title", "revenue"), drop=FALSE]
+    ```
     - ¿Cuál es la película que más votos tuvo?
+    ```{r echo=FALSE}
+    head(dataframe[order(-dataframe$vote_count),], 1)[, c("id", "original_title", "vote_count"), drop=FALSE]
+    ```
     - ¿Cuál es la peor película de acuerdo a los votos de todos los usuarios?
+    ```{r echo=FALSE}
+    head(dataframe[order(dataframe$vote_average),], 2)[, c("id", "original_title", "vote_average"), drop=FALSE]
+    ```
     - ¿Cuántas películas se hicieron en cada año? ¿En qué año se hicieron más películas? Haga un gráfico de barras
     - ¿Cuál es el género principal de las 20 películas más populares?
     - ¿Cuál es el género que predomina en el conjunto de datos? Represéntelo usando un gráfico
