@@ -42,6 +42,15 @@ data.frame("Variable"=c(colnames(dataframe)), "Tipo de Variable"=c("N/A", "N/A",
     head(dataframe[order(dataframe$vote_average),], 2)[, c("id", "original_title", "vote_average"), drop=FALSE]
     ```
     - ¿Cuántas películas se hicieron en cada año? ¿En qué año se hicieron más películas? Haga un gráfico de barras
+    ```{r echo=FALSE}
+    library(dplyr)
+    ```
+    ```{r echo=FALSE}
+    releases_per_year <- data.frame(tally(group_by(dataframe, release_year)))
+    releases_per_year
+    barplot(releases_per_year$n, names.arg = releases_per_year$release_year)
+    head(releases_per_year[order(-releases_per_year$n),], 1)[,, drop=FALSE]
+    ```
     - ¿Cuál es el género principal de las 20 películas más populares?
     - ¿Cuál es el género que predomina en el conjunto de datos? Represéntelo usando un gráfico
     - ¿Las películas de qué genero principal obtuvieron mayores ganancias?
