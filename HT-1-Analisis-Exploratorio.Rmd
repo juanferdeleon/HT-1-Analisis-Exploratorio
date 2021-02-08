@@ -1,0 +1,34 @@
+---
+title: "HT-1-Analisis-Exploratorio"
+author: "Juan De Leon, Maria Jose Castro, Jose Block"
+date: "2/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejercicios
+
+1. Haga una exploración rápida de sus datos, para eso haga un resumen de su conjunto de datos.
+2. Diga el tipo de cada una de las variables (cualitativa ordinal o nominal, cuantitativa continua, cuantitativa discreta).
+3. Investigue si las variables cuantitativas siguen una distribución normal y haga una tabla de frecuencias de las variables cualitativas. Explique todos los resultados.
+4. Responda las siguientes preguntas:
+    - ¿Cuáles son las 10 películas que contaron con más presupuesto?
+    - ¿Cuáles son las 10 películas que más ingresos tuvieron?
+    - ¿Cuál es la película que más votos tuvo?
+    - ¿Cuál es la peor película de acuerdo a los votos de todos los usuarios?
+    - ¿Cuántas películas se hicieron en cada año? ¿En qué año se hicieron más películas? Haga un gráfico de barras
+    - ¿Cuál es el género principal de las 20 películas más populares?
+    - ¿Cuál es el género que predomina en el conjunto de datos? Represéntelo usando un gráfico
+    - ¿Las películas de qué genero principal obtuvieron mayores ganancias?
+    - ¿Las películas de qué genero principal necesitaron mayor presupuesto?
+    - ¿Quiénes son los 20 mejores directores que hicieron películas altamente calificadas?
+    - ¿Cómo se correlacionan los presupuestos con los ingresos? ¿Los altos presupuestos significan altos ingresos? Haga los gráficos que necesite, histograma, diagrama de dispersión
+    - ¿Se asocian ciertos meses de lanzamiento con mejores ingresos?
+    - ¿En qué meses se han visto los lanzamientos máximos?
+    - ¿Cómo se correlacionan las calificaciones con el éxito comercial?
+    - ¿A qué género principal pertenecen las películas más largas?
+5. Genere usted otras seis preguntas que le parezcan interesantes porque le permitan realizar otras exploraciones y respóndalas. No puede repetir ninguna de las instrucciones anteriores.
+    
