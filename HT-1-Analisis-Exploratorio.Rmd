@@ -16,6 +16,10 @@ dataframe = read.csv("./Data/tmdb-movies.csv")
 ## Ejercicios
 
 1. Haga una exploración rápida de sus datos, para eso haga un resumen de su conjunto de datos.
+```{r echo=FALSE}
+summary(dataframe)
+```
+
 2. Diga el tipo de cada una de las variables (cualitativa ordinal o nominal, cuantitativa continua, cuantitativa discreta).
 ```{r echo=FALSE}
 data.frame("Variable"=c(colnames(dataframe)), "Tipo de Variable"=c("N/A", "N/A", "Cuantitativa Continua", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Continua", "Cuantitativa Discreta", "Cuantitativa Continua", "Cuantitativa Continua"))
@@ -171,49 +175,77 @@ table(pj$director)
 ```
     
     - ¿Cómo se correlacionan los presupuestos con los ingresos? ¿Los altos presupuestos significan altos ingresos? Haga los gráficos que necesite, histograma, diagrama de dispersión
-```{r}
+```{r echo=FALSE, warning=FALSE}
 ggscatter(movies, x = "budget", y = "revenue", 
 add = "reg.line", conf.int = TRUE, 
 cor.coef = TRUE, cor.method = "pearson",
 xlab = "Presupuesto", ylab = "Ingresos")
 ```
+
+
+A pesar de que la correlacion sea de 0.73, por la forma en la que el grafico de dispersion se exparse, resulta dificil concluir. Pero nuestra conclusion es no, hay lanzamientos con muy poco presupuesto, pero con un alto ingreso comparado con el presupuesto. Tambien hay otros que cuentan con un presupuesto monstruoso pero con un ingreso en casi 0. Depende mucho de la tematica de la pelicula. Consideramos que es cuestion de habilidad sobre presupuesto.    
+    
     
     - ¿Se asocian ciertos meses de lanzamiento con mejores ingresos?
-```{r}
+```{r echo=FALSE, warning=FALSE}
 movies$release_date <- as.Date(movies$release_date, "%m/%d/%Y")
 movies$Month <- format(movies$release_date , "%m")
 mothmean<-aggregate(movies[5], list(movies$Month), mean)
 yValue <- mothmean$revenue
 xValue<-mothmean$Group.1
-barplot(yValue,names.arg=xValue,xlab="Month",ylab="Revenue",col="blue", main="Revenue chart",border="red")
+barplot(yValue,names.arg=xValue,xlab="Month",ylab="Revenue",col="blue", main="Revenue mean per month",border="red")
 
 ```
-    
+Segun el grafico de la media de ingresos por mes el mes con mayor ingresos es junio seguido de mayo. Es importante saber que un dato atipico extremo puede cambiar la media de un mes sustancialmente. 
     - ¿En qué meses se han visto los lanzamientos máximos?
-```{r}
+```{r echo=FALSE, warning=FALSE}
 plot(movies$Month, movies$revenue, main="Dispersion de Iingresos por mes",
 xlab="Meses", ylab="Ingresos", pch=19)
 
 lanzamientospormes<-rep(movies$Month)
 lpm<-table(lanzamientospormes)
-barplot(lpm,main="Lanzamientos por Mes", xlab="Mes",ylab="Lanzamientos")
+barplot(lpm,main="Lanzamientos por Mes", xlab="Meses",ylab="Lanzamientos",,ylim=c(0,1400))
 ```
+
+
+
+En la primer grafico de dispercion podemos notar los datos atipicos extremos por cada mes. Esto nos da una idea de como se ve afectada la media de ingresos por mes. Se puede ver que el dato mas alto esta en diciembre, se trata de Avatar.
+
+Por otro lado se hizo un grafico de lanzamientos por mes y hay una anomalia en el comportamiento, hay mas lanzamientos en el mes que menos ingresos hay. Esto puede deberse a que como hay una cantidad de lanzamientos significativamente mayor, esto puede disminuir la efectividad de cada lanzamiento individualmente.
+    
+    
+    
     
     - ¿Cómo se correlacionan las calificaciones con el éxito comercial?
-```{r}
+```{r echo=FALSE, warning=FALSE}
 ggscatter(movies, x = "vote_average", y = "revenue", 
 add = "reg.line", conf.int = TRUE, 
 cor.coef = TRUE, cor.method = "spearman",
 xlab = "Promedio de votos", ylab = "Ingresos")
+
+ggscatter(movies, x = "vote_count", y = "revenue", 
+add = "reg.line", conf.int = TRUE, 
+cor.coef = TRUE, cor.method = "spearman",
+xlab = "Promedio de votos", ylab = "Ingresos")
 ```
+
+
+
+
+En el primer grafico de dispercion podemos notar que hay una correlacion muy baja(0.19) entre los ingresos y el promedio de votos. Por otro lado podemos ver el grafico que le sigue y tenemos una correlacion considerable de 0.68 entre los ingresos y la cantidad de votos, demostrando que a mayores vistas, mayor ingreso.
+
+
+
     
     - ¿A qué género principal pertenecen las películas más largas?
-```{r}
+```{r echo=FALSE, warning=FALSE}
 pg <- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA), sep="([|?:])")
 runtimemean<-aggregate(pg[13], list(pg$p_genre), mean)
 barplot(runtimemean$runtime, names.arg = runtimemean$Group.1,main="Runtime mean per genre", xlab="",ylab="Runtime", las= 2,ylim=c(0,140))
-
 ```
     
-5. Genere usted otras seis preguntas que le parezcan interesantes porque le permitan realizar otras exploraciones y respóndalas. No puede repetir ninguna de las instrucciones anteriores.
+    
+    
+El genero pincipal al que pertenecen las peliculas mas extensas son las peliculas de historia, seguido de las peliculas de guerra como se muestra en el grafico de "Runtime mean per genre"   
+    
     
