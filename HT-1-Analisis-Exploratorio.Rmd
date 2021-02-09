@@ -41,6 +41,8 @@ revenue_adj <- rnorm(dataframe$revenue_adj)
 hist(revenue_adj, main="Distribucion de revenue_adj")
 ```
 
+* Debido a que las tablas de frecuencia son muy grandes dejamos indicado como se obentrian todas las tablas de frecuencia de las variables cualitativas.
+
 ```
 table(dataframe$original_title)
 table(dataframe$cast)
