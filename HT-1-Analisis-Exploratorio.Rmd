@@ -86,10 +86,87 @@ table(dataframe$production_companies)
     head(releases_per_year[order(-releases_per_year$n),], 1)[,, drop=FALSE]
     ```
     - ¿Cuál es el género principal de las 20 películas más populares?
+```{r echo=FALSE, warning=FALSE}
+library(tidyr)
+movies<-read.csv("./Data/tmdb-movies.csv")
+popular20_ <- head(movies[order(movies$popularity, decreasing = TRUE),],20)
+#obtenemos el genero con la funcion separate y contamos
+pf<- popular20_ %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA), sep="([|?:])")
+table(pf$p_genre)
+```
+    
     - ¿Cuál es el género que predomina en el conjunto de datos? Represéntelo usando un gráfico
+```{r echo=FALSE, warning=FALSE}
+pg <- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA), sep="([|?:])")
+#plot de los generos
+barplot(
+  table(pg$p_genre),
+  main="Géneros más comunes",
+  col=rainbow(15),
+  xlab="Géneros",  
+  ylab="Cantidad de Peliculas",
+  xlim=c(0,25),
+  ylim=c(0,2500)
+  )
+
+```
+    
     - ¿Las películas de qué genero principal obtuvieron mayores ganancias?
+```{r echo=FALSE, warning=FALSE}
+ph<-pg[order(movies$revenue, decreasing = TRUE),]
+result<-aggregate(ph[5], list(ph$p_genre), mean )
+phr<-result[-c(1),]
+#View(phr)
+barplot(phr$revenue,
+        las= 2,
+        names.arg =phr$Group.1,
+        main="Las peliculas con mayores ganacias",
+        col=rainbow(15),
+        xlab="Géneros",  
+        ylab="Total",
+        xlim=c(0,19),
+        ylim=c(0,	124755984.2)
+        
+        )
+```
+    
     - ¿Las películas de qué genero principal necesitaron mayor presupuesto?
+```{r echo=FALSE, warning=FALSE}
+budget<- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA),)
+#View(budget)
+orderBud<-budget[order(movies$budget, decreasing = TRUE),]
+
+#View(orderBud)
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+resultI<-aggregate(orderBud$budget, list(orderBud$p_genre), mean )
+pi<-resultI[-c(1),]
+View(pi)
+head(resultI)
+#table(pi)
+names(pi)<-c('Generos','budget')
+barplot(pi$budget,
+        las= 2,
+        names.arg =pi$Generos,
+        main="Los generos con mayor presupuesto",
+        col=rainbow(15),
+        xlab="Géneros",  
+        ylab="Presupuesto",
+        xlim=c(0,19),
+        ylim=c(0, 37675772.0)
+)
+```
+    
     - ¿Quiénes son los 20 mejores directores que hicieron películas altamente calificadas?
+```{r echo=FALSE, warning=FALSE}
+pj<- head(movies[order(movies$vote_average, decreasing = TRUE),],20,na.rm = TRUE)
+#View(pj)
+#Aqui contamos las que corresponden a cada director
+table(pj$director)
+```
+    
     - ¿Cómo se correlacionan los presupuestos con los ingresos? ¿Los altos presupuestos significan altos ingresos? Haga los gráficos que necesite, histograma, diagrama de dispersión
     - ¿Se asocian ciertos meses de lanzamiento con mejores ingresos?
     - ¿En qué meses se han visto los lanzamientos máximos?
