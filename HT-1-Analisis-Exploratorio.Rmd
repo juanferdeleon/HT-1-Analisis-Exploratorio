@@ -41,6 +41,18 @@ revenue_adj <- rnorm(dataframe$revenue_adj)
 hist(revenue_adj, main="Distribucion de revenue_adj")
 ```
 
+```
+table(dataframe$original_title)
+table(dataframe$cast)
+table(dataframe$homepage)
+table(dataframe$director)
+table(dataframe$tagline)
+table(dataframe$keywords)
+table(dataframe$overview)
+table(dataframe$genreS)
+table(dataframe$production_companies)
+```
+
 4. Responda las siguientes preguntas:
     - ¿Cuáles son las 10 películas que contaron con más presupuesto?
     ```{r echo=FALSE, include=FALSE}
