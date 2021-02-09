@@ -21,6 +21,26 @@ dataframe = read.csv("./Data/tmdb-movies.csv")
 data.frame("Variable"=c(colnames(dataframe)), "Tipo de Variable"=c("N/A", "N/A", "Cuantitativa Continua", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Continua", "Cuantitativa Discreta", "Cuantitativa Continua", "Cuantitativa Continua"))
 ```
 3. Investigue si las variables cuantitativas siguen una distribución normal y haga una tabla de frecuencias de las variables cualitativas. Explique todos los resultados.
+
+```{r echo=FALSE}
+popularity <- rnorm(dataframe$popularity)
+hist(popularity, main="Distribucion de Popularity")
+budget <- rnorm(dataframe$budget)
+hist(budget, main="Distribucion de budget")
+revenue <- rnorm(dataframe$revenue)
+hist(revenue, main="Distribucion de revenue")
+runtime <- rnorm(dataframe$runtime)
+hist(runtime, main="Distribucion de runtime")
+vote_count <- rnorm(dataframe$vote_count)
+hist(vote_count, main="Distribucion de vote_count")
+vote_average <- rnorm(dataframe$vote_average)
+hist(vote_average, main="Distribucion de vote_average")
+budget_adj <- rnorm(dataframe$budget_adj)
+hist(budget_adj, main="Distribucion de budget_adj")
+revenue_adj <- rnorm(dataframe$revenue_adj)
+hist(revenue_adj, main="Distribucion de revenue_adj")
+```
+
 4. Responda las siguientes preguntas:
     - ¿Cuáles son las 10 películas que contaron con más presupuesto?
     ```{r echo=FALSE, include=FALSE}
