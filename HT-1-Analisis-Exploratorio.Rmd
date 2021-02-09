@@ -87,6 +87,7 @@ table(dataframe$production_companies)
     head(releases_per_year[order(-releases_per_year$n),], 1)[,, drop=FALSE]
     ```
     - ¿Cuál es el género principal de las 20 películas más populares?
+    -Para esto se separo la lista de los generos y solo se tomo en cuenta el primero de la lista. 
 ```{r echo=FALSE, warning=FALSE}
 library(tidyr)
 library(ggplot2)
@@ -98,6 +99,7 @@ table(pf$p_genre)
 ```
     
     - ¿Cuál es el género que predomina en el conjunto de datos? Represéntelo usando un gráfico
+    - En este cao el genero mass comun es las peliculas de drama. Se separaron por genero.
 ```{r echo=FALSE, warning=FALSE}
 pg <- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA), sep="([|?:])")
 #plot de los generos
@@ -105,6 +107,7 @@ barplot(
   table(pg$p_genre),
   main="Géneros más comunes",
   col=rainbow(15),
+  las = 2,
   xlab="Géneros",  
   ylab="Cantidad de Peliculas",
   xlim=c(0,25),
@@ -114,6 +117,7 @@ barplot(
 ```
     
     - ¿Las películas de qué genero principal obtuvieron mayores ganancias?
+    - Las peliculas de Aventura son las que mas ganacias dan a los estudias, para poder hacer esto se separaron los generos de cada pelicula. Luego se creo el promedio de gancias por genero y se grafico.
 ```{r echo=FALSE, warning=FALSE}
 ph<-pg[order(movies$revenue, decreasing = TRUE),]
 result<-aggregate(ph[5], list(ph$p_genre), mean )
@@ -126,14 +130,14 @@ barplot(phr$revenue,
         col=rainbow(15),
         xlab="Géneros",  
         ylab="Total",
-        xlim=c(0,19),
+        xlim=c(0,25),
         ylim=c(0,	124755984.2)
         
         )
 ```
     
     - ¿Las películas de qué genero principal necesitaron mayor presupuesto?
-
+- Las peliculas de Aventura son las que mas presupuesto requieren, para poder hacer esto se separaron los generos de cada pelicula. Luego se creo el promedio re presupuesto por genero y se grafico.
 ```{r echo=FALSE, warning=FALSE}
 budget<- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA),)
 #View(budget)
