@@ -78,6 +78,7 @@ table(dataframe$production_companies)
     - ¿Cuántas películas se hicieron en cada año? ¿En qué año se hicieron más películas? Haga un gráfico de barras
     ```{r echo=FALSE}
     library(dplyr)
+    library(ggpubr)
     ```
     ```{r echo=FALSE}
     releases_per_year <- data.frame(tally(group_by(dataframe, release_year)))
@@ -88,6 +89,7 @@ table(dataframe$production_companies)
     - ¿Cuál es el género principal de las 20 películas más populares?
 ```{r echo=FALSE, warning=FALSE}
 library(tidyr)
+library(ggplot2)
 movies<-read.csv("./Data/tmdb-movies.csv")
 popular20_ <- head(movies[order(movies$popularity, decreasing = TRUE),],20)
 #obtenemos el genero con la funcion separate y contamos
@@ -131,31 +133,28 @@ barplot(phr$revenue,
 ```
     
     - ¿Las películas de qué genero principal necesitaron mayor presupuesto?
+
 ```{r echo=FALSE, warning=FALSE}
 budget<- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA),)
 #View(budget)
 orderBud<-budget[order(movies$budget, decreasing = TRUE),]
-
+#head(orderBud)
 #View(orderBud)
-```
-
-
-```{r echo=FALSE, warning=FALSE}
-resultI<-aggregate(orderBud$budget, list(orderBud$p_genre), mean )
+resultI<-aggregate(orderBud[4], list(ph$p_genre),mean)
+#View(resultI)
 pi<-resultI[-c(1),]
-View(pi)
-head(resultI)
+#View(pi)
 #table(pi)
-names(pi)<-c('Generos','budget')
-barplot(pi$budget,
-        las= 2,
-        names.arg =pi$Generos,
-        main="Los generos con mayor presupuesto",
+barplot(resultI$budget,
+        las =2,
+        names.arg =resultI$Group.1,
+        
+        main="Las peliculas con mayor presupuesto",
         col=rainbow(15),
         xlab="Géneros",  
         ylab="Presupuesto",
-        xlim=c(0,19),
-        ylim=c(0, 37675772.0)
+        xlim=c(0,25),
+        ylim=c(0, 45000000)
 )
 ```
     
@@ -168,9 +167,49 @@ table(pj$director)
 ```
     
     - ¿Cómo se correlacionan los presupuestos con los ingresos? ¿Los altos presupuestos significan altos ingresos? Haga los gráficos que necesite, histograma, diagrama de dispersión
+```{r}
+ggscatter(movies, x = "budget", y = "revenue", 
+add = "reg.line", conf.int = TRUE, 
+cor.coef = TRUE, cor.method = "pearson",
+xlab = "Presupuesto", ylab = "Ingresos")
+```
+    
     - ¿Se asocian ciertos meses de lanzamiento con mejores ingresos?
+```{r}
+movies$release_date <- as.Date(movies$release_date, "%m/%d/%Y")
+movies$Month <- format(movies$release_date , "%m")
+mothmean<-aggregate(movies[5], list(movies$Month), mean)
+yValue <- mothmean$revenue
+xValue<-mothmean$Group.1
+barplot(yValue,names.arg=xValue,xlab="Month",ylab="Revenue",col="blue", main="Revenue chart",border="red")
+
+```
+    
     - ¿En qué meses se han visto los lanzamientos máximos?
+```{r}
+plot(movies$Month, movies$revenue, main="Dispersion de Iingresos por mes",
+xlab="Meses", ylab="Ingresos", pch=19)
+
+lanzamientospormes<-rep(movies$Month)
+lpm<-table(lanzamientospormes)
+barplot(lpm,main="Lanzamientos por Mes", xlab="Mes",ylab="Lanzamientos")
+```
+    
     - ¿Cómo se correlacionan las calificaciones con el éxito comercial?
+```{r}
+ggscatter(movies, x = "vote_average", y = "revenue", 
+add = "reg.line", conf.int = TRUE, 
+cor.coef = TRUE, cor.method = "spearman",
+xlab = "Promedio de votos", ylab = "Ingresos")
+```
+    
     - ¿A qué género principal pertenecen las películas más largas?
+```{r}
+pg <- movies %>% separate(genres, c("p_genre", "SE_genre", "3_genre", NA), sep="([|?:])")
+runtimemean<-aggregate(pg[13], list(pg$p_genre), mean)
+barplot(runtimemean$runtime, names.arg = runtimemean$Group.1,main="Runtime mean per genre", xlab="",ylab="Runtime", las= 2,ylim=c(0,140))
+
+```
+    
 5. Genere usted otras seis preguntas que le parezcan interesantes porque le permitan realizar otras exploraciones y respóndalas. No puede repetir ninguna de las instrucciones anteriores.
     
