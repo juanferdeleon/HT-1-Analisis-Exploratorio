@@ -74,6 +74,28 @@ Para seleccionar el valor óptimo de k, se escoje entonces ese punto en donde ya
 
 3. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno.
 
+##Hierarchical Clustering
+
+```{r}
+
+library(ggdendro)
+library(ggplot2)
+
+summary(dataframe)
+
+agrupamientoJ <- hclust(dist(dataframe, method = 'euclidean'), method = 'ward.D')
+clases_aj <- cutree(agrupamientoJ, k = 7)
+dataframe$cluster <- clases_aj
+
+ggplot() + geom_point(aes(x = popularity, y = vote_average, color = cluster), data = dataframe, size = 2) +
+  scale_colour_gradientn(colours=rainbow(4)) +
+  ggtitle('Clusters de Datos con k = 7 / Agrupamiento Jerárquico') + 
+  xlab('X') + ylab('Y')
+
+
+```
+
+
 4. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados.
 
 5. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
