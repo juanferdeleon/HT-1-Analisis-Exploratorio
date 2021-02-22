@@ -26,8 +26,47 @@ variables
 
 Se consideró que las variables mencionadas anteriormente no aportan ningun valor significatico en la formacion de grupos ya que estas son caracteristicas unicas de cada registro dentro del data set. 
 
+```{r}
+
+dataframe = read.csv("../Data/tmdb-movies.csv")
+dataframe <- na.omit(dataframe)
+
+dataframe$popularity = ifelse(is.na(dataframe$popularity),ave(dataframe$popularity, FUN = function(x) mean(x, na.rm = 'TRUE')),dataframe$popularity)
+dataframe$budget = ifelse(is.na(dataframe$budget),ave(dataframe$budget, FUN = function(x) mean(x, na.rm = 'TRUE')),dataframe$budget)
+dataframe$revenue = ifelse(is.na(dataframe$revenue),ave(dataframe$revenue, FUN = function(x) mean(x, na.rm = 'TRUE')),dataframe$revenue)
+dataframe$runtime = ifelse(is.na(dataframe$runtime),ave(dataframe$runtime, FUN = function(x) mean(x, na.rm = 'TRUE')),dataframe$runtime)
+dataframe$vote_count = ifelse(is.na(dataframe$vote_count),ave(dataframe$vote_count, FUN = function(x) mean(x, na.rm = 'TRUE')),dataframe$vote_count)
+dataframe$vote_average = ifelse(is.na(dataframe$vote_average),ave(dataframe$vote_average, FUN = function(x) mean(x, na.rm = 'TRUE')),dataframe$vote_average)
+
+```
+
+Se realizo una verificacion de las variables cuantitativas para remover los valores N/A.
+
 
 2. Determine cuál es el número de grupos a formar más adecuado para los datos que está trabajando. Haga una gráfica de codo y explique la razón de la elección de la cantidad de clústeres con la que trabajará.
+
+```{r echo=FALSE, include=FALSE}
+
+set.seed(20)
+data.matrix(dataframe)
+test1 <- scale(na.omit(data.matrix(dataframe)[-1]))
+
+wssplot <- function(test1, nc=20, seed=123){
+  wss <- (nrow(test1)-1)*sum(apply(test1, 2, var))
+  for (i in 2:nc){
+    set.seed(seed)
+    wss[i] <- sum(kmeans(test1, centers = i)$withinss)
+  }
+  plot(1:nc, wss, type="b", xlab="Number of clusters", ylab="Whithin Groups Number of squares")
+}
+```
+
+```{r echo=FALSE}
+
+wssplot(test1, nc=20)
+
+
+```
 
 3. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno.
 
