@@ -45,7 +45,7 @@ Se realizo una verificacion de las variables cuantitativas para remover los valo
 
 2. Determine cuál es el número de grupos a formar más adecuado para los datos que está trabajando. Haga una gráfica de codo y explique la razón de la elección de la cantidad de clústeres con la que trabajará.
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, warning=FALSE}
 
 set.seed(20)
 data.matrix(dataframe)
@@ -57,16 +57,20 @@ wssplot <- function(test1, nc=20, seed=123){
     set.seed(seed)
     wss[i] <- sum(kmeans(test1, centers = i)$withinss)
   }
-  plot(1:nc, wss, type="b", xlab="Number of clusters", ylab="Whithin Groups Number of squares")
+  plot(1:nc, wss, type="b", xlab="Number of clusters", ylab="Whithin Groups Sum of squares")
 }
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 
 wssplot(test1, nc=20)
 
 
 ```
+
+
+Para seleccionar el valor óptimo de k, se escoje entonces ese punto en donde ya no se dejan de producir variaciones importantes del valor de WCSS al aumentar k. En este caso, vemos que esto se produce a partir de k >= 7, por lo que evaluaremos los resultados del agrupamiento, por ejemplo, con los valores de 7, 8 y 9 a fin de observar el comportamiento del modelo.
+
 
 3. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno.
 
