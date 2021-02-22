@@ -1,7 +1,7 @@
 ---
 title: "HT-1-Analisis-Exploratorio"
 author: "Juan De Leon, Maria Jose Castro, Jose Block"
-date: "2/18/2021"
+date: "02/22/2021"
 output: html_document
 ---
 
@@ -9,22 +9,28 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Hoja de Trabajo 2
+### Clustering
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+1. Haga el preprocesamiento del dataset, explique qué variables no aportan información a la generación de grupos y por qué. Describa con qué variables calculará los grupos.
 
-```{r cars}
-summary(cars)
+
+```{r echo=FALSE}
+variables <- matrix(c('Id', 'imdb_id', 'original_title', 'homepage', 'tagline', 'overview'), ncol=1, byrow=TRUE)
+colnames(variables) <- c("Variables que no aportan inforacion para el clustering")
+rownames(variables) <- c(1, 2, 3, 4, 5, 6)
+variables <- as.table(variables)
+variables
 ```
 
-## Including Plots
+Se consideró que las variables mencionadas anteriormente no aportan ningun valor significatico en la formacion de grupos ya que estas son caracteristicas unicas de cada registro dentro del data set. 
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+2. Determine cuál es el número de grupos a formar más adecuado para los datos que está trabajando. Haga una gráfica de codo y explique la razón de la elección de la cantidad de clústeres con la que trabajará.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+3. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno.
+
+4. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados.
+
+5. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
