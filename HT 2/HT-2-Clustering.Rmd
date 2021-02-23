@@ -69,27 +69,35 @@ wssplot(test1, nc=20)
 ```
 
 
-Para seleccionar el valor óptimo de k, se escoje entonces ese punto en donde ya no se dejan de producir variaciones importantes del valor de WCSS al aumentar k. En este caso, vemos que esto se produce a partir de k >= 7, por lo que evaluaremos los resultados del agrupamiento, por ejemplo, con los valores de 7, 8 y 9 a fin de observar el comportamiento del modelo.
+Para seleccionar el valor óptimo de k, se escoje entonces ese punto en donde ya no se dejan de producir variaciones importantes del valor de WCSS al aumentar k. En este caso, vemos que esto se produce a partir de k >= 5, por lo que evaluaremos los resultados del agrupamiento, por ejemplo, con los valores de 7, 8 y 9 a fin de observar el comportamiento del modelo.
 
 
 3. Utilice 3 algoritmos existentes para agrupamiento. Compare los resultados generados por cada uno.
 
-##Hierarchical Clustering
+## Hierarchical Clustering
 
-```{r}
+```{r echo=FALSE, warning=FALSE}
+
+dft <- data.frame(dataframe$budget, dataframe$revenue)
 
 library(ggdendro)
 library(ggplot2)
 
-summary(dataframe)
+seeds_df_sc <- as.data.frame(scale(dft))
+
+dist_mat <- dist(seeds_df_sc, method = 'euclidean')
+
+hclust_avg <- hclust(dist_mat, method = 'average')
+
+plot(hclust_avg)
 
 agrupamientoJ <- hclust(dist(dataframe, method = 'euclidean'), method = 'ward.D')
-clases_aj <- cutree(agrupamientoJ, k = 7)
+clases_aj <- cutree(agrupamientoJ, k = 5)
 dataframe$cluster <- clases_aj
 
-ggplot() + geom_point(aes(x = popularity, y = vote_average, color = cluster), data = dataframe, size = 2) +
+ggplot() + geom_point(aes(x = budget, y = revenue, color = cluster), data = dataframe, size = 2) +
   scale_colour_gradientn(colours=rainbow(4)) +
-  ggtitle('Clusters de Datos con k = 7 / Agrupamiento Jerárquico') + 
+  ggtitle('Clusters de Datos con k = 5 / Agrupamiento Jerárquico') + 
   xlab('X') + ylab('Y')
 
 
@@ -97,5 +105,26 @@ ggplot() + geom_point(aes(x = popularity, y = vote_average, color = cluster), da
 
 
 4. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados.
+
+```{r echo=FALSE, warning=FALSE}
+
+library(cluster)    # clustering algorithms
+
+avg_sil <- function(k) {
+  km.res <- kmeans(na.omit(dft), centers = k, nstart = 25)
+  ss <- silhouette(km.res$cluster, dist(dft))
+  mean(ss[, 3])
+}
+
+k.values <- 2:14
+
+avg_sil_values <- sapply(k.values, avg_sil)
+
+plot(k.values, avg_sil_values,
+       type = "b", pch = 19, frame = FALSE, 
+       xlab = "Number of clusters K",
+       ylab = "Average Silhouettes")
+
+```
 
 5. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
