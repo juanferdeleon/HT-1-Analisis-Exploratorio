@@ -103,6 +103,20 @@ ggplot() + geom_point(aes(x = budget, y = revenue, color = cluster), data = data
 
 ```
 
+## K-means Clustering
+```{r echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(factoextra)
+
+mydata <- dataframe %>% select(4, 5)
+x<- data.matrix(mydata)
+km<-kmeans(x, 5, iter.max = 10, nstart = 1)
+plot(x, col = km$cluster)
+points(km$centers, col = 1:5, type= "p",pch = 8, cex = 10)
+
+```
+
+
 
 4. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados.
 
@@ -126,5 +140,7 @@ plot(k.values, avg_sil_values,
        ylab = "Average Silhouettes")
 
 ```
+
+En base a los resultados del metodo de la silueta consideramos que hubiese sido mejor agrupar en 4 clusters en lugar de 5. Al comparar los resultados de los algoritmos consideramos que K-Means Clustering es una muy buena opcion para analizar el set de datos y agrupamiento de las variables que nuestro grupo decidio estudiar. Esto ya que separo de una mejor manera los datos y se identifico mas facilmente los distintos clusters. 
 
 5. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
