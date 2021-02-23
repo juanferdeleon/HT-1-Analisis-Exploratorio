@@ -94,6 +94,19 @@ ggplot() + geom_point(aes(x = popularity, y = vote_average, color = cluster), da
 
 
 ```
+##K-means Clustering
+```{r}
+library(tidyverse)
+library(factoextra)
+
+mydata <- dataframe %>% select(4, 5)
+x<- data.matrix(mydata)
+km<-kmeans(x, 5, iter.max = 10, nstart = 1)
+plot(x, col = km$cluster)
+points(km$centers, col = 1:5, type= "p",pch = 8, cex = 10)
+
+```
+
 
 
 4. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados.
