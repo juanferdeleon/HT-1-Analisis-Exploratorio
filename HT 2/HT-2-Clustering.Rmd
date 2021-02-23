@@ -141,6 +141,6 @@ plot(k.values, avg_sil_values,
 
 ```
 
-En base a los resultados del metodo de la silueta consideramos que hubiese sido mejor agrupar en 4 clusters en lugar de 5. Al comparar los resultados de los algoritmos consideramos que K-Means Clustering es una muy buena opcion para analizar el set de datos y agrupamiento de las variables que nuestro grupo decidio estudiar. Esto ya que separo de una mejor manera los datos y se identifico mas facilmente los distintos clusters. 
+En base a los resultados del metodo de la silueta consideramos que hubiese sido mejor agrupar en 4 clusters en lugar de 5. En la grafica de codo que obtuvimos se nos dificulto cual cantidad de clusters era la adecuada. Al comparar los resultados de los algoritmos consideramos que K-Means Clustering es una muy buena opcion para analizar el set de datos y agrupamiento de las variables que nuestro grupo decidio estudiar. Esto ya que separo de una mejor manera los datos y se identifico mas facilmente los distintos clusters. 
 
 5. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
