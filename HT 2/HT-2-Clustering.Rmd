@@ -116,6 +116,26 @@ points(km$centers, col = 1:5, type= "p",pch = 8, cex = 10)
 
 ```
 
+## Mixture of Gaussians
+```{r echo=FALSE, warning=FALSE}
+library(cluster) #Para calcular la silueta
+library(mclust) #mixtures of gaussians
+#dataframe = read.csv("tmdb-movies.csv")
+dataframe <- na.omit(dataframe)
+mc<-Mclust(dataframe[,4:5],5)
+plot(mc, what = "classification", main="MClust Classification", colours=rainbow(5) )
+dataframe$mxGau<-mc$classification
+g1MC<-dataframe[dataframe$mxGau==1,]
+g2MC<-dataframe[dataframe$mxGau==2,]
+g3MC<-dataframe[dataframe$mxGau==3,]
+g4MC<-dataframe[dataframe$mxGau==4,]
+g5MC<-dataframe[dataframe$mxGau==5,]
+
+#silmg<-silhouette(mc$classification,dist(dataframe[,4:5]))
+#mean(silmg[,3]) 
+
+```
+
 
 
 4. Determine la calidad del agrupamiento hecho por cada algoritmo con el método de la silueta. Discuta los resultados.
@@ -143,4 +163,16 @@ plot(k.values, avg_sil_values,
 
 En base a los resultados del metodo de la silueta consideramos que hubiese sido mejor agrupar en 4 clusters en lugar de 5. En la grafica de codo que obtuvimos se nos dificulto cual cantidad de clusters era la adecuada. Al comparar los resultados de los algoritmos consideramos que K-Means Clustering es una muy buena opcion para analizar el set de datos y agrupamiento de las variables que nuestro grupo decidio estudiar. Esto ya que separo de una mejor manera los datos y se identifico mas facilmente los distintos clusters. 
 
+Podemos ver que dentro de cada una de las agrupaciones o clusters se tiene aproximadamente los mismos resultados en las graficas. El algoritmo que mostro una distribucion mucho mas centrada de 3 fue K-Means, ya que al compararla con Hierarchial podemos ver que varios de los valores del cluster 1, se separan en 2 dentro de K-Means, esto nos puede ayudar a que en el analisis se puedan dejar de tomar en cuenta los clusters de datos atipicos o extremos, sin perder gran candidad de informacion. O en caso contrario poder evaluar unicamente el cluster con informacion de los extremos.
+
+Ahora tomando como punto de partida Mixture of Gaussians podemos ver que es muy similar al Hierarchial Clustering. En el Hierarchial podemos ver que el agrupamiento fue seleccionado mas sobre el budjet, en este caso los clusters se pueden extienten a lo largo del eje X. Versus Mixture of Gaussians podemos ver que los primeros 2 clusters (en colores naranja y purpura) son muy similares con los de Hierarchial, pero al avanzar dentro del eje Y (revenue) se puede ver que se tienen 3 clusters distintos que acoplan los puntos de mayor contentracion. 
+
+En este caso consideramos que el algoritmo a utilizar depende mucho de la data o informacion a evaluar, de igual manera el enfoque que se le desea dar al estudio. 
+
 5. Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.
+
+
+```{r}
+summary(dataframe)
+```
+
