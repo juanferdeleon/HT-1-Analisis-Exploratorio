@@ -454,30 +454,24 @@ dataframe$vote_average = ifelse(is.na(dataframe$vote_average),ave(dataframe$vote
 <pre class="r"><code>  summary(clases_aj)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   1.000   3.000   5.000   4.296   5.000   5.000</code></pre>
-<pre class="r"><code>  summary(km)</code></pre>
-<pre><code>##              Length Class  Mode   
-## cluster      10866  -none- numeric
-## centers         10  -none- numeric
-## totss            1  -none- numeric
-## withinss         5  -none- numeric
-## tot.withinss     1  -none- numeric
-## betweenss        1  -none- numeric
-## size             5  -none- numeric
-## iter             1  -none- numeric
-## ifault           1  -none- numeric</code></pre>
+<pre class="r"><code>  summary(x)</code></pre>
+<pre><code>##      budget             revenue         
+##  Min.   :        0   Min.   :0.000e+00  
+##  1st Qu.:        0   1st Qu.:0.000e+00  
+##  Median :        0   Median :0.000e+00  
+##  Mean   : 14625701   Mean   :3.982e+07  
+##  3rd Qu.: 15000000   3rd Qu.:2.400e+07  
+##  Max.   :425000000   Max.   :2.782e+09</code></pre>
 <p>Ahora tomando como punto de partida Mixture of Gaussians podemos ver que es muy similar al Hierarchial Clustering. En el Hierarchial podemos ver que el agrupamiento fue seleccionado mas sobre el budjet, en este caso los clusters se pueden extienten a lo largo del eje X. Versus Mixture of Gaussians podemos ver que los primeros 2 clusters (en colores naranja y purpura) son muy similares con los de Hierarchial, pero al avanzar dentro del eje Y (revenue) se puede ver que se tienen 3 clusters distintos que acoplan los puntos de mayor contentracion.</p>
 <p>En este caso consideramos que el algoritmo a utilizar depende mucho de la data o informacion a evaluar, de igual manera el enfoque que se le desea dar al estudio.</p>
-<pre class="r"><code>   summary(km)</code></pre>
-<pre><code>##              Length Class  Mode   
-## cluster      10866  -none- numeric
-## centers         10  -none- numeric
-## totss            1  -none- numeric
-## withinss         5  -none- numeric
-## tot.withinss     1  -none- numeric
-## betweenss        1  -none- numeric
-## size             5  -none- numeric
-## iter             1  -none- numeric
-## ifault           1  -none- numeric</code></pre>
+<pre class="r"><code>   summary(x)</code></pre>
+<pre><code>##      budget             revenue         
+##  Min.   :        0   Min.   :0.000e+00  
+##  1st Qu.:        0   1st Qu.:0.000e+00  
+##  Median :        0   Median :0.000e+00  
+##  Mean   : 14625701   Mean   :3.982e+07  
+##  3rd Qu.: 15000000   3rd Qu.:2.400e+07  
+##  Max.   :425000000   Max.   :2.782e+09</code></pre>
 <pre class="r"><code>    summary(mc)</code></pre>
 <pre><code>## ---------------------------------------------------- 
 ## Gaussian finite mixture model fitted by EM algorithm 
@@ -494,7 +488,6 @@ dataframe$vote_average = ifelse(is.na(dataframe$vote_average),ave(dataframe$vote
 </div>
 <div id="trabajo-siguiente" class="section level2">
 <h2>6. Trabajo Siguiente</h2>
-<p>En este caso se investigara</p>
 <pre class="r"><code>summary(dataframe)</code></pre>
 <pre><code>##        id           imdb_id            popularity           budget         
 ##  Min.   :     5   Length:10866       Min.   : 0.00006   Min.   :        0  
@@ -538,6 +531,7 @@ dataframe$vote_average = ifelse(is.na(dataframe$vote_average),ave(dataframe$vote
 ##  Mean   :5.136e+07   Mean   :4.296   Mean   :4.486  
 ##  3rd Qu.:3.370e+07   3rd Qu.:5.000   3rd Qu.:5.000  
 ##  Max.   :2.827e+09   Max.   :5.000   Max.   :5.000</code></pre>
+<p>En base al inciso anterior y el resumen que se hizo previamente podemos ver que se tiene mayor informacion con el algoritmo K-means, se utilizara este para poder hacer clustering sobre aproximadamente 4 grupos que fue lo recomendado, de igual manera despues de hacer este analisis se puede utilizar este algoritmo para comparar el revenue-popularity, para poder determinar si las peliculas mas populares son las que obtuvieron mayores ganancias o si el indice de popualaridad realmente es importante.</p>
 </div>
 
 
