@@ -450,6 +450,51 @@ dataframe$vote_average = ifelse(is.na(dataframe$vote_average),ave(dataframe$vote
 <ol start="5" style="list-style-type: decimal">
 <li>Interprete los grupos basado en el conocimiento que tiene de los datos. Recuerde investigar las medidas de tendencia central de las variables continuas y las tablas de frecuencia de las variables categóricas pertenecientes a cada grupo. Identifique hallazgos interesantes debido a las agrupaciones y describa para qué le podría servir.</li>
 </ol>
+<p>Podemos ver que dentro de cada una de las agrupaciones o clusters se tiene aproximadamente los mismos resultados en las graficas. El algoritmo que mostro una distribucion mucho mas centrada de 3 fue K-Means, ya que al compararla con Hierarchial podemos ver que varios de los valores del cluster 1, se separan en 2 dentro de K-Means, esto nos puede ayudar a que en el analisis se puedan dejar de tomar en cuenta los clusters de datos atipicos o extremos, sin perder gran candidad de informacion. O en caso contrario poder evaluar unicamente el cluster con informacion de los extremos.</p>
+<pre class="r"><code>  summary(clases_aj)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   1.000   3.000   5.000   4.296   5.000   5.000</code></pre>
+<pre class="r"><code>  summary(km)</code></pre>
+<pre><code>##              Length Class  Mode   
+## cluster      10866  -none- numeric
+## centers         10  -none- numeric
+## totss            1  -none- numeric
+## withinss         5  -none- numeric
+## tot.withinss     1  -none- numeric
+## betweenss        1  -none- numeric
+## size             5  -none- numeric
+## iter             1  -none- numeric
+## ifault           1  -none- numeric</code></pre>
+<p>Ahora tomando como punto de partida Mixture of Gaussians podemos ver que es muy similar al Hierarchial Clustering. En el Hierarchial podemos ver que el agrupamiento fue seleccionado mas sobre el budjet, en este caso los clusters se pueden extienten a lo largo del eje X. Versus Mixture of Gaussians podemos ver que los primeros 2 clusters (en colores naranja y purpura) son muy similares con los de Hierarchial, pero al avanzar dentro del eje Y (revenue) se puede ver que se tienen 3 clusters distintos que acoplan los puntos de mayor contentracion.</p>
+<p>En este caso consideramos que el algoritmo a utilizar depende mucho de la data o informacion a evaluar, de igual manera el enfoque que se le desea dar al estudio.</p>
+<pre class="r"><code>   summary(km)</code></pre>
+<pre><code>##              Length Class  Mode   
+## cluster      10866  -none- numeric
+## centers         10  -none- numeric
+## totss            1  -none- numeric
+## withinss         5  -none- numeric
+## tot.withinss     1  -none- numeric
+## betweenss        1  -none- numeric
+## size             5  -none- numeric
+## iter             1  -none- numeric
+## ifault           1  -none- numeric</code></pre>
+<pre class="r"><code>    summary(mc)</code></pre>
+<pre><code>## ---------------------------------------------------- 
+## Gaussian finite mixture model fitted by EM algorithm 
+## ---------------------------------------------------- 
+## 
+## Mclust EVV (ellipsoidal, equal volume) model with 5 components: 
+## 
+##  log-likelihood     n df       BIC       ICL
+##       -405733.7 10866 25 -811699.8 -822804.1
+## 
+## Clustering table:
+##    1    2    3    4    5 
+## 1020  109  189  797 8751</code></pre>
+</div>
+<div id="trabajo-siguiente" class="section level2">
+<h2>6. Trabajo Siguiente</h2>
+<p>En este caso se investigara</p>
 <pre class="r"><code>summary(dataframe)</code></pre>
 <pre><code>##        id           imdb_id            popularity           budget         
 ##  Min.   :     5   Length:10866       Min.   : 0.00006   Min.   :        0  
