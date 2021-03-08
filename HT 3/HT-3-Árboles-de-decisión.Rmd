@@ -58,7 +58,54 @@ Se escogieron las variables representadas en las graficas presentadas anteriorme
 
 ## - Analisis de Grupos
 
+```{r echo=FALSE, include=FALSE}
+set.seed(20)
+data <- df[,c("Lot.Frontage","Lot.Area","Year.Built","Garage.Yr.Blt","Garage.Area","Yr.Sold", "SalePrice")]
+data <- na.omit(data)
+
+wssplot <- function(test1, nc=20, seed=123){
+  wss <- (nrow(data)-1)*sum(apply(data,2,var))
+  for (i in 2:10) 
+    wss[i] <- sum(kmeans(data, centers=i)$withinss)
+  plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of squares")
+}
+
+```
+
+Para realizar la grafica de codo se seleccionaron las variables cuantitativas que consideramos mas relevantes que son factores que podrian influir para deterinar el precio de venta de una casa. Mediante esta grafica de codo podemos determinar cuantos clusters seran pertinentes para nuestro analisis de datos. 
+
+```{r echo=FALSE}
+wssplot(test1, nc=20)
+```
+
+El grafico antes mostrado nos indica que podemos hacer una eleccion entre 3 y 5 clusters por lo que se decidira utilizar 4 clusters para el analisis de datos.
+
+```{r echo=FALSE}
+
+library(tidyverse)  # data manipulation
+library(cluster)    # clustering algorithms
+library(factoextra)
+
+k1 <- kmeans(data, centers = 4, nstart = 25)
+fviz_cluster(k1, data = data)
+
+```
+
+Luego del agrupamiento se obtuvo la grafica anterior, sin embargo, dada la cantidad de datos y la cercania entre valores no se puede apreciar con certeza los clusters generados. Por que que decidimos separar los clusters por variables especificas. Por ejemplo, se decidio ver los clusters creados al comparar unicamente el año en que se realizó la casa y su precio de venta.
+
+```{r echo=FALSE}
+mydata <- data %>% select(3, 7)
+x<- data.matrix(mydata)
+km<-kmeans(x, 4, iter.max = 10, nstart = 1)
+plot(x, col = km$cluster)
+points(km$centers, col = 1:5, type= "p",pch = 8, cex = 10)
+```
+
+
 ## - Clasificacion de Casas (Economicas, Intermedias y Caras)
+
+
+
 
 ## - Dividir Set de Datos (Entrenamiento y Prueba)
 
