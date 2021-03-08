@@ -46,12 +46,21 @@ Graficas de Puntos
 ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Lot.Area)) 
 ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Year.Built))
 ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Yr.Sold))
-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Neighborhood))
+q<-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Neighborhood))
+q + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Garage.Type))
 ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Garage.Area))
 
 
 ```
+Un breve resumen:
+```{r echo=FALSE}
+library(tidyverse)
+sd<-df %>% select(3:82)
+library(gtsummary)
+tbl_summary(sd)
+```
+
 
 Se escogieron las variables representadas en las graficas presentadas anteriormente ya que se considero que estas estan fuertemente relacionadas al Sale Price. Precisamente se obtuvo mucha informacion a partir de esto. Las variables cuantitativas, en su mayoria, tienen una distribucion normal. Asimismo, se pudo identificar cuales eran los rangos de precios y que factores influian mas en el mismo.
 
