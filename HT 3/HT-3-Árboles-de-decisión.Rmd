@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r include=FALSE}
-df = read.csv("./AmesHousing.csv")
+df = read.csv("./train.csv")
 ```
 
 ## - Analisis Exploratorio
@@ -21,7 +21,7 @@ Aqui se pueden apreciar las variables con las que cuenta este set de datos. Se a
 
 ```{r echo=FALSE }
 
-data.frame("Variable"=c(colnames(df)), "Tipo de Variable"=c("N/A", "N/A", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cuantitativa Discreta"))
+data.frame("Variable"=c(colnames(df)), "Tipo de Variable"=c("N/A", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Nominal", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cualitativa Ordinal", "Cualitativa Ordinal", "Cualitativa Nominal", "Cuantitativa Discreta"))
 
 ```
 
@@ -31,9 +31,9 @@ Histogramas
 
 library(tidyverse)
 
-ggplot(data=df) + geom_histogram(mapping = aes(x = Lot.Area))
-ggplot(data=df) + geom_histogram(mapping = aes(x = Year.Built))
-ggplot(data=df) + geom_histogram(mapping = aes(x = Yr.Sold))
+ggplot(data=df) + geom_histogram(mapping = aes(x = LotArea))
+ggplot(data=df) + geom_histogram(mapping = aes(x = YearBuilt))
+ggplot(data=df) + geom_histogram(mapping = aes(x = YrSold))
 ggplot(data=df) + geom_histogram(mapping = aes(x = SalePrice))
 
 
@@ -43,20 +43,20 @@ Graficas de Puntos
 
 ```{r echo=FALSE}
 
-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Lot.Area)) 
-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Year.Built))
-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Yr.Sold))
+ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = LotArea)) 
+ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = YearBuilt))
+ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = YrSold))
 q<-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Neighborhood))
 q + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Garage.Type))
-ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = Garage.Area))
+ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = GarageType))
+ggplot(data=df) + geom_point(mapping = aes(y = SalePrice, x = GarageArea))
 
 
 ```
 Un breve resumen:
 ```{r echo=FALSE}
 library(tidyverse)
-sd<-df %>% select(3:82)
+sd<-df %>% select(2:81)
 library(gtsummary)
 tbl_summary(sd)
 ```
@@ -69,7 +69,7 @@ Se escogieron las variables representadas en las graficas presentadas anteriorme
 
 ```{r echo=FALSE, include=FALSE}
 set.seed(20)
-data <- df[,c("Lot.Frontage","Lot.Area","Year.Built","Garage.Yr.Blt","Garage.Area","Yr.Sold", "SalePrice")]
+data <- df[,c("LotFrontage","LotArea","YearBuilt","GarageYrBlt","GarageArea","YrSold", "SalePrice")]
 data <- na.omit(data)
 
 wssplot <- function(test1, nc=20, seed=123){
