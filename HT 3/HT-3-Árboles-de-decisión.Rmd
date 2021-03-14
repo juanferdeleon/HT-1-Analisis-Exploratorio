@@ -146,7 +146,6 @@ points(km$centers, col = 1:5, type= "p",pch = 8, cex = 10)
 ```
 
 
-
 Percentiles:
 
 ```{r echo=FALSE}
@@ -169,6 +168,12 @@ df$tipoDeCasa = cut(df$SalePrice,c(0,145000,205000,410000), labels = c("economic
 
 ```
 ## - Dividir Set de Datos (Entrenamiento y Prueba)
+
+Se utilizara el 70% de los datos para entrenamiento y el 30% restante para prueba. Es necesario brindar una cantidad sustancial de datos al algoritmo para entrenarlo y asi realizar un buen analisis y que el algoritmo pueda clasificar de manera correcta el set de datos. Se eligieron registros al azar para hacer la clasificacion.
+
+
+## - Arbol de Clasificacion
+
 ```{r echo=FALSE}
 
 library(rpart)
@@ -196,12 +201,39 @@ dt_model<-rpart(tipoDeCasa~.,train,method = "class")
 
 rpart.plot(dt_model)
 
+
+
 ```
 
 
-## - Arbol de Clasificacion
-
 ## - Arbol de Regresion
+
+
+```{r echo=FALSE, warning=FALSE}
+
+percent <- 70/100
+cluster <- data
+km<-kmeans(data,3)
+data$grupo<-km$cluster
+
+datosFTree <- data[, c("LotFrontage", "LotArea", "YearBuilt", "GarageArea", "GarageYrBlt", "YrSold", "grupo")]
+
+
+set.seed(321)
+
+trainRowsNumber<-sample(1:nrow(datosFTree),percent*nrow(datosFTree))
+
+train<-datosFTree[trainRowsNumber,]
+test<-datosFTree[-trainRowsNumber,]
+
+dt_model<-rpart(train$grupo~.,train,method = "anova")
+rpart.plot(dt_model)
+
+
+```
+
+La primer variable que toma el arbol de regresion es el año en que se construyó la casa, el algoritmo nos indica que el 57% de las casas fue construida antes del año 1984 y el 43% restante fue construido en 1984 o despues. Seguido de esto, con las casas construidas antes del año 1984(57%), el arbol separa por el frente de la casa, en donde el 40% es menor a 78 ft. y el 17% es mayor o igual que 78 ft. ambos grupos de casas entran en el grupo 2 (casas intermedias). Ahora bien, del otro lado del arbol, con las casas construidas despues de 1983(43%) el arbol divide por el area del garage, donde el 11% es menor que 705ft cubicos y el 31% es mayor o igual a 705ft cubicos. Las casas con un garage menor a 705ft cubicos(11%) se divide en el tamaño del terreno, en donde el 6% es menor que 1200 ft cubicos y el 5% es mayor o igual. El primer grupo entra dentro de las casas economicas y el segundo en las casas intermedias. Seguido de esto, las casas con un garage mayor o igual a 705ft. cubicos(31%)se divide en las casas con un terreno menor a 3706ft. cubicos(3%) y casas con un terreno mayor o igual a 3706ft. (29%). Las casas con un area menor a 3706ft cubicos entra dentro del grupo de casas intermedias, sin embargo, las casas con un area mayor de terreno(29%) se dividen de la siguiente manera: Frente de la casa mayor o igual a 101 ft. el 2% tienen un frente menor y el 27% tienen un frente mayor. Independientemente de que division sea, ambas entran dentro del grupo de casas caras.
+
 
 ## - Analisis de Eficiencia Arblo de Clasificacion|
 
