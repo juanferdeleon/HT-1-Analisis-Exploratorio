@@ -67,7 +67,7 @@ Se escogieron las variables representadas en las graficas presentadas anteriorme
 
 ## - Analisis de Grupos
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE warning=FALSE}
 set.seed(20)
 data <- df[,c("LotFrontage","LotArea","YearBuilt","GarageYrBlt","GarageArea","YrSold", "SalePrice")]
 data <- na.omit(data)
@@ -83,13 +83,13 @@ wssplot <- function(test1, nc=20, seed=123){
 
 Para realizar la grafica de codo se seleccionaron las variables cuantitativas que consideramos mas relevantes que son factores que podrian influir para deterinar el precio de venta de una casa. Mediante esta grafica de codo podemos determinar cuantos clusters seran pertinentes para nuestro analisis de datos. 
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 wssplot(test1, nc=20)
 ```
 
 El grafico antes mostrado nos indica que podemos hacer una eleccion entre 3 y 5 clusters por lo que se decidira utilizar 4 clusters para el analisis de datos.
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 
 library(tidyverse)  # data manipulation
 library(cluster)    # clustering algorithms
@@ -102,7 +102,7 @@ fviz_cluster(k1, data = data)
 
 Luego del agrupamiento se obtuvo la grafica anterior, sin embargo, dada la cantidad de datos y la cercania entre valores no se puede apreciar con certeza los clusters generados. Por que que decidimos separar los clusters por variables especificas. Por ejemplo, se decidio ver los clusters creados al comparar unicamente el año en que se realizó la casa y su precio de venta.
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 mydata <- data %>% select(3, 7)
 a<- data.matrix(mydata)
 km<-kmeans(a, 3, iter.max = 10, nstart = 1)
@@ -112,7 +112,7 @@ points(km$centers, col = 1:5, type= "p",pch = 8, cex = 10)
 
 De esta manera se pudo apreciar mejor la division entre grupoos. Y se realizo asi con todas las variables que considermaos necesarias para el analisis.
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 
 mydata <- data %>% select(1, 7)
 a<- data.matrix(mydata)
@@ -162,7 +162,7 @@ A partir de los clusters obtenidos y los percentiles se determino el rango de pr
 3. Casas Caras: 205,000 a 410,000
 4. Casas Muy caras:
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 library(plyr)
 df$tipoDeCasa = cut(df$SalePrice,c(0,145000,205000,410000), labels = c("economico", "intermedio", "caro"))
 
@@ -174,7 +174,7 @@ Se utilizara el 70% de los datos para entrenamiento y el 30% restante para prueb
 
 ## - Arbol de Clasificacion
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 
 library(rpart)
 library(caret)
@@ -213,13 +213,6 @@ test$prediccion<-columnaMasAlta
 cfm<-confusionMatrix(as.factor(test$prediccion),test$tipoDeCasa)
 cfm
 ```
-Efectividad:
-```{r echo=FALSE}
-library(dplyr)
-
-```
-
-
 
 ## - Arbol de Regresion
 
@@ -262,11 +255,13 @@ library(caret)
 
 ```
 
+## - Analisis 
+
+
 La primer variable que toma el arbol de regresion es el año en que se construyó la casa, el algoritmo nos indica que el 57% de las casas fue construida antes del año 1984 y el 43% restante fue construido en 1984 o despues. Seguido de esto, con las casas construidas antes del año 1984(57%), el arbol separa por el frente de la casa, en donde el 40% es menor a 78 ft. y el 17% es mayor o igual que 78 ft. ambos grupos de casas entran en el grupo 2 (casas intermedias). Ahora bien, del otro lado del arbol, con las casas construidas despues de 1983(43%) el arbol divide por el area del garage, donde el 11% es menor que 705ft cubicos y el 31% es mayor o igual a 705ft cubicos. Las casas con un garage menor a 705ft cubicos(11%) se divide en el tamaño del terreno, en donde el 6% es menor que 1200 ft cubicos y el 5% es mayor o igual. El primer grupo entra dentro de las casas economicas y el segundo en las casas intermedias. Seguido de esto, las casas con un garage mayor o igual a 705ft. cubicos(31%)se divide en las casas con un terreno menor a 3706ft. cubicos(3%) y casas con un terreno mayor o igual a 3706ft. (29%). Las casas con un area menor a 3706ft cubicos entra dentro del grupo de casas intermedias, sin embargo, las casas con un area mayor de terreno(29%) se dividen de la siguiente manera: Frente de la casa mayor o igual a 101 ft. el 2% tienen un frente menor y el 27% tienen un frente mayor. Independientemente de que division sea, ambas entran dentro del grupo de casas caras.
 
+En el arbol de clasificacion, la raíz se basa en OverallQual comparando con 7 y se separa entre economico e intermedio y caro e intermiedio. Los siguientes nodos son GarageCars y GrLivArea, seguido de GarageType, GarageYrBlt , Neighborhood y BldgType. Repartiendose un total de 45% economico, 30% intermedio y 25% caro. Luego se corrieron las pruebas para hacer predicciones y se compararon los resultados con una matriz de confusion que dio un indice de precision de 0.7361 con un rango de presición de (0.6919, 0.7771). La variable mas dificil de identificar es "intermedio"
 
-## - Analisis de Eficiencia Arblo de Clasificacion|
+Por ultimo para el Random Forest.  Para la muestra de datos seleccionada podemos ver que si es posible encontrar un parametro que nos brinde un random forest con resultados mas precisos. Estos resultados pueden variar dependiento del parametro seleccionado, en este caso fue el tipoDeCasa. En el caso de mostrar la matriz de confusion podemos ver que el numero de arboles generados no influye de forma significativa en el sesgo entre precios. Por el nivel de accuracy obtenido podemos determinar que el random forest fue exitoso con su proyeccion y queda abierto a utilizar el mimo medoto con otro parametro y evaluar posibles resulados no contemplados. El random forest resulto ser una herramienta capaz de detectar la importancia de las variables y otros parametros. Asi como tambien se demostro que su nivel de Accuracy depende de la seleccion de parametros, pues de ser una varibale poco significativa se veria un aumento en el sesgo de los datos y los resultados lanzados por el arbol.
 
-## - Analisis de Eficiencia Matriz
 
-## - Analisis de Desempeño Arbol de Regresion
