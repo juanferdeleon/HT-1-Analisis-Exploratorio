@@ -187,23 +187,38 @@ datos <- df
 # variable respuesta la clase de la flor
 porciento <- 70/100
 
-set.seed(123)
 
-trainRowsNumber<-sample(1:nrow(datos),porciento*nrow(datos))
-train<-datos[trainRowsNumber,]
-test<-datos[-trainRowsNumber,]
-arbolModelo<-rpart(tipoDeCasa~.,datos,method = "class")
+
+datosFTree <- subset (datos, select = -c(1,15,23,24,32,43,81))
+
+
+
+trainRowsNumber<-sample(1:nrow(datosFTree),porciento*nrow(datosFTree))
+train<-datosFTree[trainRowsNumber,]
+test<-datosFTree[-trainRowsNumber,]
+arbolModelo<-rpart(tipoDeCasa~.,datosFTree,method = "class")
 rpart.plot(arbolModelo)
 
 save(train,test,arbolModelo, file = "Variables.RData")
 load("Variables.RData")
 dt_model<-rpart(tipoDeCasa~.,train,method = "class")
-
 rpart.plot(dt_model)
 
+head(test)
+prediccion <- predict(dt_model, newdata = test)
 
+columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
+test$prediccion<-columnaMasAlta
+
+cfm<-confusionMatrix(as.factor(test$prediccion),test$tipoDeCasa)
+cfm
+```
+Efectividad:
+```{r echo=FALSE}
+library(dplyr)
 
 ```
+
 
 
 ## - Arbol de Regresion
@@ -216,7 +231,7 @@ cluster <- data
 km<-kmeans(data,3)
 data$grupo<-km$cluster
 
-datosFTree <- data[, c("LotFrontage", "LotArea", "YearBuilt", "GarageArea", "GarageYrBlt", "YrSold", "grupo")]
+datosFTree <- subset (datos, select = -c(1,15,23,24,32,43,81))
 
 
 set.seed(321)
@@ -226,7 +241,7 @@ trainRowsNumber<-sample(1:nrow(datosFTree),percent*nrow(datosFTree))
 train<-datosFTree[trainRowsNumber,]
 test<-datosFTree[-trainRowsNumber,]
 
-dt_model<-rpart(train$grupo~.,train,method = "anova")
+dt_model<-rpart(tipoDeCasa~.,train,method = "anova")
 rpart.plot(dt_model)
 
 
