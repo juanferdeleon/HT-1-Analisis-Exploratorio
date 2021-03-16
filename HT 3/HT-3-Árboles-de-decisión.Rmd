@@ -247,6 +247,21 @@ rpart.plot(dt_model)
 
 ```
 
+## -Random Forest
+```{r}
+library(caret)
+#trainData<-df[trainRowsNumber,]
+#test<-df[-trainRowsNumber,]
+#ct<-trainControl(method = "cv",trainData,number=10, verboseIter=T)
+#model_random_forest<-train(tipoDeCasa~.,data=trainData,method="rf",trControl = ct)
+#prediccionrfVC<-predict(model_random_forest,newdata = test)
+#test$predrfVC<-prediccionrfVC
+
+#cfmCaret <- confusionMatrix(table(test$predrfVC,test$tipoDeCasa))
+#cfmCaret
+
+```
+
 La primer variable que toma el arbol de regresion es el año en que se construyó la casa, el algoritmo nos indica que el 57% de las casas fue construida antes del año 1984 y el 43% restante fue construido en 1984 o despues. Seguido de esto, con las casas construidas antes del año 1984(57%), el arbol separa por el frente de la casa, en donde el 40% es menor a 78 ft. y el 17% es mayor o igual que 78 ft. ambos grupos de casas entran en el grupo 2 (casas intermedias). Ahora bien, del otro lado del arbol, con las casas construidas despues de 1983(43%) el arbol divide por el area del garage, donde el 11% es menor que 705ft cubicos y el 31% es mayor o igual a 705ft cubicos. Las casas con un garage menor a 705ft cubicos(11%) se divide en el tamaño del terreno, en donde el 6% es menor que 1200 ft cubicos y el 5% es mayor o igual. El primer grupo entra dentro de las casas economicas y el segundo en las casas intermedias. Seguido de esto, las casas con un garage mayor o igual a 705ft. cubicos(31%)se divide en las casas con un terreno menor a 3706ft. cubicos(3%) y casas con un terreno mayor o igual a 3706ft. (29%). Las casas con un area menor a 3706ft cubicos entra dentro del grupo de casas intermedias, sin embargo, las casas con un area mayor de terreno(29%) se dividen de la siguiente manera: Frente de la casa mayor o igual a 101 ft. el 2% tienen un frente menor y el 27% tienen un frente mayor. Independientemente de que division sea, ambas entran dentro del grupo de casas caras.
 
 
