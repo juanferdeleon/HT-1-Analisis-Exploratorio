@@ -1,0 +1,61 @@
+---
+title: "HT 4. Modelos de Regresion Lineal"
+author: "Juan De Leon, Maria Jose Castro, Jose Block"
+date: "22/03/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## - Modelo de Regresion Lineal 
+
+```{r echo=FALSE, warning=FALSE}
+
+# Load Data
+df = read.csv("./train.csv")
+df$tipoDeCasa = cut(df$SalePrice,c(0,145000,205000,410000), labels = c("economico", "intermedio", "caro"))
+
+# Separate data
+porciento <- 70/100
+datosFTree <- subset (df, select = -c(1,15,23,24,32,43))
+trainRowsNumber<-sample(1:nrow(datosFTree),porciento*nrow(datosFTree))
+train<-datosFTree[trainRowsNumber,]
+test<-datosFTree[-trainRowsNumber,]
+
+# Save Info
+save(train,test, file = "TrainTest.RData")
+
+```
+
+```{r echo=FALSE, warning=FALSE }
+
+load("TrainTest.RData")
+
+# Create Model
+Model <- lm(SalePrice ~ LotFrontage + LotArea + YearBuilt + GarageYrBlt + GarageArea + YrSold + tipoDeCasa , data = train)
+# Prediction
+pred <- predict(Model, data = test)
+
+# Comparing Values
+plot(test$SalePrice, type="l", lty=1.8, col="blue")
+lines(pred, type="l", col="red")
+
+# Finding Accuracy
+rmse <- sqrt(mean(pred-test$SalePrice)^2)
+
+```
+
+En los modelos de prediccion buscamos que las dos graficas presentadas anteriormente sean lo mas similar posible. 
+
+
+## - Analisis del Modelo
+
+## - Calidad del Modelo
+
+## - Eficiencia del Algoritmo
+
+## - Efectividad del Modelo
+
+## - Eficiancia del Algoritmo VS Arbol de Desicion 
