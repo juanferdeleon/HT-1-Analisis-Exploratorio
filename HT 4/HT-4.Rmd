@@ -15,14 +15,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Load Data
 df = read.csv("./train.csv")
-df$tipoDeCasa = cut(df$SalePrice,c(0,145000,205000,410000), labels = c("economico", "intermedio", "caro"))
+df$tipoDeCasa = as.numeric(as.character( cut(df$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
 
+# Check correlation
+library(corrplot)
+frstselect <- subset (df, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
+M <- cor(frstselect)
+corrplot(M, method = "circle") # Display the correlation coefficient
+```
+Se escoge qué variables tienen una correlación evidente, por color.Por lo tanto se decide que las variables que tienen correlación entre ellas que hay que escoger una entre esas, serían las siguientes:
+
+TotalBsmtSF con X1stFlrSF con X2ndFlrSF,
+GrLivArea con TotRmsAbvGrd,
+BsmtFinSF1 con BsmtFullBath,y 
+OverallQual con GarageCars con GarageArea
+
+A continuacion se puede ver la correlacion del las variables anteriormente mencionadas con SalePrice, a partir de estos resultados escogemos que variables entre las correlacionadas se escogeran como representante del resto.
+```{r echo=FALSE, warning=FALSE }
+#Compare correlation between chosen vars
+compco <- subset (df, select = c(18,35,39,44,45,47,48,55,62,63))
+cor(compco, df$SalePrice)
 # Separate data
 porciento <- 70/100
-datosFTree <- subset (df, select = -c(1,15,23,24,32,43))
-trainRowsNumber<-sample(1:nrow(datosFTree),porciento*nrow(datosFTree))
-train<-datosFTree[trainRowsNumber,]
-test<-datosFTree[-trainRowsNumber,]
+datoslm <- subset (df, select = c(2,4,5,18,19,20,21,27,35,37,38,39,46,47,49,50,51,52,53,57,60,67,68,69,70,71,72,76,77,78,82))
+trainRowsNumber<-sample(1:nrow(datoslm),porciento*nrow(datoslm))
+train<-datoslm[trainRowsNumber,]
+test<-datoslm[-trainRowsNumber,]
 
 # Save Info
 save(train,test, file = "TrainTest.RData")
@@ -33,17 +51,29 @@ save(train,test, file = "TrainTest.RData")
 
 load("TrainTest.RData")
 
-# Create Model
-Model <- lm(SalePrice ~ LotFrontage + LotArea + YearBuilt + GarageYrBlt + GarageArea + YrSold + tipoDeCasa , data = train)
+# Create Lineal Model
+Model <- lm(tipoDeCasa ~ . , data = train)
+summary(Model)
+
 # Prediction
-pred <- predict(Model, data = test)
+library(caret)
+test$prediccion <- predict(Model, newdata = test)
+testcomp <- subset (test, select = c(31,32))
+testcomp = round(testcomp, digits = 0)
+testcomp$prediccion = ifelse(testcomp$prediccion %in% c(1,2,3) ,testcomp$prediccion*1, 1)
+testcomp = testcomp[rowSums(is.na(testcomp[ , 1:2])) == 0, ]
+sapply(testcomp, class)
+summary(testcomp)
+testfn <- table(testcomp)
 
 # Comparing Values
-plot(test$SalePrice, type="l", lty=1.8, col="blue")
-lines(pred, type="l", col="red")
+cfm<-confusionMatrix(testfn)
+cfm
+#plot(test$SalePrice, type="l", lty=1.8, col="blue")
+#lines(pred, type="l", col="red")
 
 # Finding Accuracy
-rmse <- sqrt(mean(pred-test$SalePrice)^2)
+#rmse <- sqrt(mean(pred-test$SalePrice)^2)
 
 ```
 
