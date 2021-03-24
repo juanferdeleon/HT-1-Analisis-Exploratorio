@@ -54,6 +54,7 @@ load("TrainTest.RData")
 # Create Lineal Model
 Model <- lm(tipoDeCasa ~ . , data = train)
 summary(Model)
+Model
 
 # Prediction
 library(caret)
