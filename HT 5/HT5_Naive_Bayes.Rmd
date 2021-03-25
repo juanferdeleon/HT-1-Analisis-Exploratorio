@@ -1,0 +1,43 @@
+---
+title: "HT 5. Naive Bayes"
+author: "Juan De Leon, Maria Jose Castro, Jose Block"
+date: "25/03/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## - Naive Bayes 
+
+```{r echo=FALSE, warning=FALSE}
+library(e1071)
+library(caret)
+# Load Data
+df = read.csv("./train.csv")
+df$tipoDeCasa = as.numeric(as.character( cut(df$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
+
+# Select Data
+porciento <- 70/100
+frstselect <- subset (df, select = -c(1,81))
+trainRowsNumber<-sample(1:nrow(frstselect),porciento*nrow(frstselect))
+train<-frstselect[trainRowsNumber,]
+test<-frstselect[-trainRowsNumber,]
+
+# Modelo de Naive Bayes
+train$tipoDeCasa <- factor(train$tipoDeCasa)
+modelo<-naiveBayes(train$tipoDeCasa~., data=train)
+modelo
+sapply(modelo,class)
+predBayes<-predict(modelo, newdata = test)
+summary(predBayes)
+head(predBayes)
+#tst <- subset (df, select = c(80,81))
+#summary(tst)
+#tbtst<-table(tst)
+
+
+cm<-confusionMatrix(predBayes,factor(test$tipoDeCasa))
+cm
+```
