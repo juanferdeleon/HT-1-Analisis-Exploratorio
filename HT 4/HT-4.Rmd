@@ -82,11 +82,36 @@ En los modelos de prediccion buscamos que las dos graficas presentadas anteriorm
 
 
 ## - Analisis del Modelo
+En este caso podemos ver que el modelo de regresion lineal fue
 
 ## - Calidad del Modelo
+
+En cuanto a la calidad del modelo debemos de comparar la realidad con las predicciones realizadas, para esto podemos ver la siguiente grafica.
+
+```{r echo=FALSE, warning=FALSE }
+
+plot(test$SalePrice, type="l", lty=1.8, col="blue")
+lines(pred, type="l", col="red")
+
+# Finding Accuracy
+#rmse <- sqrt(mean(pred-test$SalePrice)^2)
+
+```
+
+Como podemos ver la similitud es bastante aproximada, por lo tanto podemos determinar que la calidad del modelo fue lo suficiente para asemejarse al conjunto original. 
+
+Para poder aumentar la calidad en cuanto a los datos se puede igresar una mayor cantidad de informacion o reevaluar si se pueden tomar en cuenta mas variables. 
 
 ## - Eficiencia del Algoritmo
 
 ## - Efectividad del Modelo
 
 ## - Eficiancia del Algoritmo VS Arbol de Desicion 
+
+En este caso podemos ver que el algoritmo tuvo la misma accuracy que e arbol de desicion usado previamente pero podemos ver que el algoritmo logro esto mismo con una mejor cantidad de datos. 
+
+En el algortimo tenemos que el nivel de  Accuracy : 0.7235, de igual manera que en el arbol.    
+
+Por lo tanto podemos determinar que el algoritmo es eficiente. Queda abierto para poder saber si el uso de menos o mas variables podria hacer un cambio significativo en el nivel de accuracy obtenido por el algoritmo. 
+
+El cambio esperado en la accuracy al tener mas variables podria ser de disminucion por la cantidad de datos e identificacion de patrones. 
