@@ -26,11 +26,11 @@ train<-frstselect[trainRowsNumber,]
 test<-frstselect[-trainRowsNumber,]
 
 # Modelo de Naive Bayes
+train$tipoDeCasa <- factor(train$tipoDeCasa)
 modelo<-naiveBayes(train$tipoDeCasa~., data=train)
 modelo
 sapply(modelo,class)
 predBayes<-predict(modelo, newdata = test)
-sapply(predBayes,class)
 summary(predBayes)
 head(predBayes)
 #tst <- subset (df, select = c(80,81))
@@ -38,5 +38,6 @@ head(predBayes)
 #tbtst<-table(tst)
 
 
-#cm<-caret::confusionMatrix(tb)
-
+cm<-confusionMatrix(predBayes,factor(test$tipoDeCasa))
+cm
+```
