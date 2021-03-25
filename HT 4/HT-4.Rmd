@@ -20,9 +20,12 @@ df$tipoDeCasa = as.numeric(as.character( cut(df$SalePrice,c(0,145000,205000,4100
 # Check correlation
 library(corrplot)
 frstselect <- subset (df, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
+sapply(frstselect,class)
 M <- cor(frstselect)
 corrplot(M, method = "circle") # Display the correlation coefficient
 ```
+
+
 Se escoge qué variables tienen una correlación evidente, por color.Por lo tanto se decide que las variables que tienen correlación entre ellas que hay que escoger una entre esas, serían las siguientes:
 
 TotalBsmtSF con X1stFlrSF con X2ndFlrSF,
@@ -53,7 +56,11 @@ load("TrainTest.RData")
 
 # Create Lineal Model
 Model <- lm(tipoDeCasa ~ . , data = train)
-summary(Model)
+```
+
+
+A continuacion se tiene el Modelo lineal que se produjo de los datos cuantitativos:
+```{r echo=FALSE, warning=FALSE }
 Model
 
 # Prediction
@@ -63,18 +70,22 @@ testcomp <- subset (test, select = c(31,32))
 testcomp = round(testcomp, digits = 0)
 testcomp$prediccion = ifelse(testcomp$prediccion %in% c(1,2,3) ,testcomp$prediccion*1, 1)
 testcomp = testcomp[rowSums(is.na(testcomp[ , 1:2])) == 0, ]
+```
+
+
+Luego se puede ver el tipo de data con la que vamos a trabajar y comprobar que esté en el formato correcto, con un summary().
+```{r echo=FALSE, warning=FALSE }
 sapply(testcomp, class)
 summary(testcomp)
 testfn <- table(testcomp)
+```
 
+
+Ahora la matriz de confusión que nos brinda información de la efectividad del modelo para predecir.
+```{r echo=FALSE, warning=FALSE }
 # Comparing Values
 cfm<-confusionMatrix(testfn)
 cfm
-#plot(test$SalePrice, type="l", lty=1.8, col="blue")
-#lines(pred, type="l", col="red")
-
-# Finding Accuracy
-#rmse <- sqrt(mean(pred-test$SalePrice)^2)
 
 ```
 
@@ -90,8 +101,8 @@ En cuanto a la calidad del modelo debemos de comparar la realidad con las predic
 
 ```{r echo=FALSE, warning=FALSE }
 
-plot(test$SalePrice, type="l", lty=1.8, col="blue")
-lines(pred, type="l", col="red")
+#plot(test$SalePrice, type="l", lty=1.8, col="blue")
+#lines(pred, type="l", col="red")
 
 # Finding Accuracy
 #rmse <- sqrt(mean(pred-test$SalePrice)^2)
