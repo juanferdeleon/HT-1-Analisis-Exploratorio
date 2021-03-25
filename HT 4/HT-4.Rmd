@@ -93,7 +93,8 @@ En los modelos de prediccion buscamos que las dos graficas presentadas anteriorm
 
 
 ## - Analisis del Modelo
-En este caso podemos ver que el modelo de regresion lineal fue
+
+En este caso podemos ver que el modelo de regresion lineal es posible indicar que la efectividad del mismo fue relativamente alta. Dado que hubieron unos datos atipicos en el set de datos este el modelo no fue exato en su totalidad, pero nos pudo brindar algo muy cercano a la realidad. Se puede decir que estos datos atipicos causan alteraciones en el Modelo de Prediccion.
 
 ## - Calidad, Eficiencia, Efectividad Y  del Modelo
 
