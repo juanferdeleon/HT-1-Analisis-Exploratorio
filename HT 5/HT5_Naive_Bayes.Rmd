@@ -43,4 +43,31 @@ Matriz de confusion:
 cm<-confusionMatrix(predBayes,factor(test$tipoDeCasa))
 cm
 ```
-Con el uso de todas las variables de la base de datos,se pudo obtener el modelo de Naive Bayes. Se hizo la prediccion y segun la matriz de confusion, tiene una precision entre 65% y 75%. En este caso se uso el 70% delos datos como grupo de entrenamiento para mantener el mismo en todos los modelos antes trabajados. Sugerimos aumentar la cantidad de datos o en este caso el porcentaje, para tener una prediccion mas precisa.  
+Con el uso de todas las variables de la base de datos,se pudo obtener el modelo de Naive Bayes. Se hizo la prediccion y segun la matriz de confusion, tiene una precision entre 65% y 75%. En este caso se uso el 70% delos datos como grupo de entrenamiento para mantener el mismo en todos los modelos antes trabajados. Sugerimos aumentar la cantidad de datos o en este caso el porcentaje, para tener una prediccion mas precisa. A continuacion se da una muestra con un 80% de grupo de entrenamiento.
+
+```{r echo=FALSE, warning=FALSE}
+# Select Data
+porcentaje <- 80/100
+frstselect <- subset (df, select = -c(1,81))
+trainRowsNum<-sample(1:nrow(frstselect),porcentaje*nrow(frstselect))
+train2<-frstselect[trainRowsNum,]
+test2<-frstselect[-trainRowsNum,]
+
+# Modelo de Naive Bayes
+train2$tipoDeCasa <- factor(train2$tipoDeCasa)
+modelo2<-naiveBayes(train2$tipoDeCasa~., data=train2)
+```
+A continuacion se puede ver el modelo dado por Naive Bayes:
+```{r echo=FALSE, warning=FALSE }
+predBayes2<-predict(modelo2, newdata = test2)
+```
+Un resumen de los resultados de la prediccion de Naive Bayes:
+```{r echo=FALSE, warning=FALSE }
+summary(predBayes2)
+```
+Matriz de confusion:
+```{r echo=FALSE, warning=FALSE }
+cm2<-confusionMatrix(predBayes2,factor(test2$tipoDeCasa))
+cm2
+```
+Los resultados son bastante parecidos a pesar de ser 80% de entrenamiento, hay corridas en las que sale victorioso el 70% de entrenamiento.
