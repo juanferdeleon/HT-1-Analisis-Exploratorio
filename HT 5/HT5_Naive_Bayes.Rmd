@@ -1,7 +1,7 @@
 ---
 title: "HT 5. Naive Bayes"
 author: "Juan De Leon, Maria Jose Castro, Jose Block"
-date: "25/03/2021"
+date: "28/03/2021"
 output: html_document
 ---
 
@@ -71,3 +71,122 @@ cm2<-confusionMatrix(predBayes2,factor(test2$tipoDeCasa))
 cm2
 ```
 Los resultados son bastante parecidos a pesar de ser 80% de entrenamiento, hay corridas en las que sale victorioso el 70% de entrenamiento.
+
+### Cross Validation
+
+```{r echo=FALSE, include=FALSE }
+
+library(h2o)
+library(dplyr)
+
+# start up h2o
+h2o.no_progress()
+h2o.init()
+
+# create feature names
+y <- "tipoDeCasa"
+x <- setdiff(names(train2), y)
+
+# h2o cannot ingest ordered factors
+train2.h2o <- train2 %>%
+  mutate_if(is.factor, factor, ordered = FALSE) %>%
+  as.h2o()
+
+# train model
+nb.h2o <- h2o.naiveBayes(
+  x = x,
+  y = y,
+  training_frame = train2.h2o,
+  nfolds = 10,
+  laplace = 0
+)
+
+# assess results
+confusionMatrixCrossValidationTrain <- h2o.confusionMatrix(nb.h2o)
+
+
+```
+
+#### - Matriz de Validacion Cruzada
+
+Aqui podemos apreciar la matriz de confusion del conjunto de datos de entrenamiento para la validacion cruzada.
+
+```{r}
+confusionMatrixCrossValidationTrain
+```
+
+Luego pasamos al conjunto de prueba.
+
+```{r echo=FALSE, include=FALSE}
+
+# do a little preprocessing
+preprocess <- preProcess(train2, method = c("BoxCox", "center", "scale"))
+train_pp   <- predict(preprocess, train2)
+test_pp    <- predict(preprocess, test2)
+
+# convert to h2o objects
+train_pp.h2o <- train_pp %>%
+  mutate_if(is.factor, factor, ordered = FALSE) %>%
+  as.h2o()
+
+test_pp.h2o <- test_pp %>%
+  mutate_if(is.factor, factor, ordered = FALSE) %>%
+  as.h2o()
+
+# get new feature names --> PCA preprocessing reduced and changed some features
+x <- setdiff(names(train_pp), "tipoDeCasa")
+
+
+# create tuning grid
+hyper_params <- list(
+  laplace = seq(0, 5, by = 0.5)
+  )
+
+# build grid search 
+grid <- h2o.grid(
+  algorithm = "naivebayes",
+  grid_id = "nb_grid",
+  x = x, 
+  y = y, 
+  training_frame = train_pp.h2o, 
+  nfolds = 10,
+  hyper_params = hyper_params
+  )
+
+# Sort the grid models by mse
+sorted_grid <- h2o.getGrid("nb_grid", sort_by = "accuracy", decreasing = TRUE)
+
+# grab top model id
+best_h2o_model <- sorted_grid@model_ids[[1]]
+best_model <- h2o.getModel(best_h2o_model)
+
+# confusion matrix of best model
+confusionMatrixCrossValidationTest <- h2o.confusionMatrix(best_model)
+
+```
+
+```{r}
+confusionMatrixCrossValidationTest
+```
+
+Finalmente evaluamos la eficiancia del algoritmo.
+
+```{r}
+# evaluate on test set
+h2o.performance(best_model, newdata = test_pp.h2o)
+```
+
+Debajo podemos apreciar los el set de datos de prueba y las predicciones que el algoritmo brindo para cada 1.
+
+```{r}
+# predict new data
+predict <- h2o.predict(nb.h2o, newdata = test_pp.h2o)
+predict
+```
+
+```{r include=FALSE, echo=FALSE}
+# shut down h2o
+h2o.shutdown(prompt = FALSE)
+
+
+```
