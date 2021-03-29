@@ -115,7 +115,6 @@ Aqui podemos apreciar la matriz de confusion del conjunto de datos de entrenamie
 confusionMatrixCrossValidationTrain
 ```
 
-Luego pasamos al conjunto de prueba.
 
 ```{r echo=FALSE, include=FALSE}
 
@@ -164,6 +163,14 @@ best_model <- h2o.getModel(best_h2o_model)
 confusionMatrixCrossValidationTest <- h2o.confusionMatrix(best_model)
 
 ```
+
+Para cada grupo de entrenamiento se obtuvo la siguiente exactitud: 
+
+```{r echo=FALSE}
+sorted_grid
+```
+
+Luego pasamos al conjunto de prueba.
 
 ```{r}
 confusionMatrixCrossValidationTest
