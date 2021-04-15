@@ -72,6 +72,13 @@ cm2
 ```
 Los resultados son bastante parecidos a pesar de ser 80% de entrenamiento, hay corridas en las que sale victorioso el 70% de entrenamiento.
 
+##Analisis de Modelo
+
+Al obtener un nivel de accuracy tan grande y porcentajes de comportamiento tan similares, surge la cuestionane si el algoritmo no sufrio un overfittin es decir un reajuste que haga al algoritmo util unicamente para este set de informacion, para poder demostrar esto se usara la Cross Valitacion y se compararan los resultados para determinar la posible existencia del mismo. 
+
+Para poder determinar si realmente existe un overfitting de los datos seria neceario poder compararlo contra otro conjunto de informacion que no haya sido utilizada en el conjunto de entrenamiento. 
+
+
 ### Cross Validation
 
 ```{r echo=FALSE, include=FALSE }
@@ -207,3 +214,14 @@ h2o.shutdown(prompt = FALSE)
 
 
 ```
+
+##Comparacion entre resultados
+En este caso al comparar el resultado de la Validacion Cruzada con Naive Bayes podemos darnos cuenta que
+en nivel de accuracy en Naive Bayes fue del 95% esto nos indica que el algoritmo esta muy bien entrenado a entender como funionan el comportamiento de los datos del algoritmo. 
+
+Por otro lado tenemos que la Validacion Cruzada lanzo un accuraccy del 62%, sin embargo este algoritmo no nos presento el mismo problema que Naive Bayes, pues al tener una accuracy tan alta corremos un alto riesgo de Overfitting. En este caso podemos determinar que una menor cantidad de datos al conjunto de entrenamiento puede que nos de un nivel de exactitud mas bajo sin embargo entre mas datos se le brinden al algortimo para entrenar este ira mejorando su nivel de exactitud, corriendo un menor riesgo de que el algortimo se acomode unicamente a ese set de datos. 
+
+Para determinar que algoritmo fue mejor para predecir seria ideal poder contar con otro set de datos y comprobar los datos lanzados por ambos algoritmos de predicciones versus el dataset nuevo. En este caso tenemos que el algoritmo de Naive Bayes, pues este presenta un nivel de exactitud mucho mayor con una menor cantidad de datos, pero se corre el riesgo de que el algoritmo tenga un overfitting.
+
+En cuanto a tiempo de procesamiento tenemos que Naive Bayes se proceso un poco mas rapido que la Validacion Cruzada, sin embargo la diferencia fue de apenas unos 3 - 5 segundos aproximadamente, lo cual no es una diferencia tan significativa como para poder ser tomada en cuenta en cuestion de eficiencia  
+
