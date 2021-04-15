@@ -191,6 +191,16 @@ predict <- h2o.predict(nb.h2o, newdata = test_pp.h2o)
 predict
 ```
 
+```{r echo=FALSE, warning=FALSE}
+# ROC curve
+auc <- h2o.auc(best_model, xval = TRUE)
+fpr <- h2o.performance(best_model, xval = TRUE)
+tpr <- h2o.performance(best_model, xval = TRUE)
+
+h2o.auc(nb.h2o)
+
+```
+
 ```{r include=FALSE, echo=FALSE}
 # shut down h2o
 h2o.shutdown(prompt = FALSE)
