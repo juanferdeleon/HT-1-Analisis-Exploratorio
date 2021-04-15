@@ -15,33 +15,98 @@ Se generan las tres variables dicotomicas segun tipoDeCasa:
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(caret)
+library(dummy)
+library(dummies)
+
+# Set de datos
 df = read.csv("./train.csv")
 df$tipoDeCasa = as.integer(as.character( cut(df$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
-df$CasasEconomicas <- as.integer(ifelse(df$tipoDeCasa == 1,1,0)) 
-df$CasasIntermedias <- as.integer(ifelse(df$tipoDeCasa == 2,1,0))
-df$CasasCaras <- as.integer(ifelse(df$tipoDeCasa == 3,1,0))
-dicot<- df %>% select(82:85)
-head(dicot)
+
 ```
 ## - Regresion Logistica
+
+### 1. Casas Economicas
+
 ```{r echo=FALSE}
 porcentaje<-0.7
 set.seed(123)
-df[sapply(df, is.character)] <- lapply(df[sapply(df, is.character)],as.factor)
-corte <- sample(nrow(df),nrow(df)*porcentaje)
-train<-df[corte,]
-test<-df[-corte,]
-str(df)
-modelo<-glm(CasasEconomicas~., data = train[,c(2:5,11:72,8,9,76:80,83)],family = binomial(), maxit=100)
-str(train$MSZoning)
-str(test$MSZoning)
+
+# Agregamos las variables dummy al Data Frame
+# Variables Dicotomicas
+df<-cbind(df,dummy(df$tipoDeCasa, verbose = T))
+
+corte <- sample(nrow(df), nrow(df)*porcentaje)
+
+# Conjutno de datos de hojas anteriores
+train <- df[corte,]
+test <- df[-corte,]
+
+nums <- unlist(lapply(train, is.numeric))
+
+modelo <- glm(train$df1~., data = train[,nums][,-c(41,42,43)],family = binomial(), maxit=100)
+
+# Modelo Regresion Logistica de casas Economicas
 modelo
-```
-## - Prediccion
-```{r echo=FALSE}
-#Error:
-#pred<-predict(modelo,newdata = test[,c(2:5,11:72,8,9,76:80)], type ="response")
-#prediccion<-ifelse(pred>=0.5,1,0)
-#confusionMatrix(as.factor(test$CasasEconomicas),as.factor(prediccion))
+
+pred<-predict(modelo,newdata = test[,nums][,-c(41,42,43)], type = "response")
+
+# La mera mera prediccion
+prediccion <- ifelse(pred>=0.5, 1, 0)
+
+test$prediccion <- prediccion
+
+plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
+lines(test$prediccion, type="l", col="red")
+
+# Matriz de Confucion
+confusionMatrix(as.factor(test$df1),as.factor(prediccion))
+
 ```
 
+### 2. Casas Intermedias
+
+```{r echo=FALSE}
+
+modelo <- glm(train$df2~., data = train[,nums][,-c(40,42,43)],family = binomial(), maxit=100)
+
+# Modelo Regresion Logistica de casas Economicas
+modelo
+
+pred<-predict(modelo,newdata = test[,nums][,-c(40,42,43)], type = "response")
+
+# La mera mera prediccion
+prediccion <- ifelse(pred>=0.5, 1, 0)
+
+test$prediccion <- prediccion
+
+plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
+lines(test$prediccion, type="l", col="red")
+
+# Matriz de Confucion
+confusionMatrix(as.factor(test$df2),as.factor(prediccion))
+
+```
+
+### 3. Casas Caras
+
+```{r echo=FALSE}
+
+modelo <- glm(train$df3~., data = train[,nums][,-c(40,41,43)],family = binomial(), maxit=100)
+
+# Modelo Regresion Logistica de casas Economicas
+modelo
+
+pred<-predict(modelo,newdata = test[,nums][,-c(40,41,43)], type = "response")
+
+# La mera mera prediccion
+prediccion <- ifelse(pred>=0.5, 1, 0)
+
+test$prediccion <- prediccion
+
+plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
+lines(test$prediccion, type="l", col="red")
+
+# Matriz de Confucion
+confusionMatrix(as.factor(test$df3),as.factor(prediccion))
+
+```
