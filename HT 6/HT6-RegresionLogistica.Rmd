@@ -43,23 +43,23 @@ test <- df[-corte,]
 
 nums <- unlist(lapply(train, is.numeric))
 
-modelo <- glm(train$df1~., data = train[,nums][,-c(41,42,43)],family = binomial(), maxit=100)
+modelo <- glm(train$df~., data = train[,nums][,-c(41,42,43)],family = binomial(), maxit=100)
 
 # Modelo Regresion Logistica de casas Economicas
-modelo
+#modelo
 
-pred<-predict(modelo,newdata = test[,nums][,-c(41,42,43)], type = "response")
+#pred<-predict(modelo,newdata = test[,nums][,-c(41,42,43)], type = "response")
 
 # La mera mera prediccion
-prediccion <- ifelse(pred>=0.5, 1, 0)
+#prediccion <- ifelse(pred>=0.5, 1, 0)
 
-test$prediccion <- prediccion
+#test$prediccion <- prediccion
 
-plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
-lines(test$prediccion, type="l", col="red")
+#plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
+#lines(test$prediccion, type="l", col="red")
 
 # Matriz de Confucion
-confusionMatrix(as.factor(test$df1),as.factor(prediccion))
+#confusionMatrix(as.factor(test$df1),as.factor(prediccion))
 
 ```
 
@@ -67,23 +67,23 @@ confusionMatrix(as.factor(test$df1),as.factor(prediccion))
 
 ```{r echo=FALSE}
 
-modelo <- glm(train$df2~., data = train[,nums][,-c(40,42,43)],family = binomial(), maxit=100)
+#modelo <- glm(train$df2~., data = train[,nums][,-c(40,42,43)],family = binomial(), maxit=100)
 
 # Modelo Regresion Logistica de casas Economicas
-modelo
+#modelo
 
-pred<-predict(modelo,newdata = test[,nums][,-c(40,42,43)], type = "response")
+#pred<-predict(modelo,newdata = test[,nums][,-c(40,42,43)], type = "response")
 
 # La mera mera prediccion
-prediccion <- ifelse(pred>=0.5, 1, 0)
+#prediccion <- ifelse(pred>=0.5, 1, 0)
 
-test$prediccion <- prediccion
+#test$prediccion <- prediccion
 
-plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
-lines(test$prediccion, type="l", col="red")
+#plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
+#lines(test$prediccion, type="l", col="red")
 
 # Matriz de Confucion
-confusionMatrix(as.factor(test$df2),as.factor(prediccion))
+#confusionMatrix(as.factor(test$df2),as.factor(prediccion))
 
 ```
 
@@ -91,22 +91,22 @@ confusionMatrix(as.factor(test$df2),as.factor(prediccion))
 
 ```{r echo=FALSE}
 
-modelo <- glm(train$df3~., data = train[,nums][,-c(40,41,43)],family = binomial(), maxit=100)
+#modelo <- glm(train$df3~., data = train[,nums][,-c(40,41,43)],family = binomial(), maxit=100)
 
 # Modelo Regresion Logistica de casas Economicas
-modelo
+#modelo
 
-pred<-predict(modelo,newdata = test[,nums][,-c(40,41,43)], type = "response")
+#pred<-predict(modelo,newdata = test[,nums][,-c(40,41,43)], type = "response")
 
 # La mera mera prediccion
-prediccion <- ifelse(pred>=0.5, 1, 0)
+#prediccion <- ifelse(pred>=0.5, 1, 0)
 
-test$prediccion <- prediccion
+#test$prediccion <- prediccion
 
-plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
-lines(test$prediccion, type="l", col="red")
+#plot(test$tipoDeCasa, type="l", lty=1.8, col="blue")
+#lines(test$prediccion, type="l", col="red")
 
-# Matriz de Confucion
-confusionMatrix(as.factor(test$df3),as.factor(prediccion))
+# Matriz de Confusion
+#confusionMatrix(as.factor(test$df3),as.factor(prediccion))
 
 ```
