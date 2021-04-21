@@ -11,17 +11,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(e1071)
 library(caret)
 # Load Data
 df = read.csv("./train.csv")
+df[is.na(df)] <- 0
 df$tipoDeCasa = as.numeric(as.character( cut(df$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
+df[sapply(df, is.character)] <- lapply(df[sapply(df, is.character)],as.factor)
+frstselect <- df[,c(2:5,11:72,8,9,76:80,82)]
+set.seed(123)
 
 # Select Data
 porciento <- 70/100
-frstselect <- subset (df, select = -c(1,81))
+#frstselect <- subset (df, select = -c(1,81))
 trainRowsNumber<-sample(1:nrow(frstselect),porciento*nrow(frstselect))
 train<-frstselect[trainRowsNumber,]
 test<-frstselect[-trainRowsNumber,]
+
+modelosvm<-svm(tipoDeCasa~.,data = train, scale = F)
+summary(modelosvm)
+grafica1<-bag(modelosvm)
+
+scndselect <- subset (df, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
+scndselect[is.na(scndselect)] <- 0
+cor(scndselect[,-1],scndselect$tipoDeCasa)
+plot(grafica1,train,OverallQual~GarageCars)
+
+modeloSVM_L<-svm(tipoDeCasa~., data=train, cost=2^5, kernel="linear") #98%
+modeloSVM_L<-svm(tipoDeCasa~., data=train, cost=2^-5, kernel="linear") #88%
+modeloSVM_L<-svm(tipoDeCasa~., data=train, cost=0.5, kernel="linear")#95%
+modeloSVM_R<-svm(tipoDeCasa~., data=train, gamma=2^-5, kernel="radial")
+modeloSVM_R<-svm(tipoDeCasa~., data=train, gamma=2^1, kernel="radial")
+summary(test)
+str(test)
+
+prediccionL<-predict(modeloSVM_L,newdata=test[,1:73])
+prediccionR<-predict(modeloSVM_R,newdata=test[,1:73])
+
+#Tarda demasiado, por la cantidad de dato y costs...
+#modeloTuneado<-tune.svm(tipoDeCasa~., data=train, #cost=c(0.01,0.1,0.5,1,5,10,16,20,32), kernel="linear")
+#predMejorModelo<-predict(modeloTuneado$best.model,newdata = #test[,1:73])
 
 
 ```
