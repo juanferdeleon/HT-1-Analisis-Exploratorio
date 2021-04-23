@@ -9,48 +9,146 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Analisis
+En esta HDT se trabajara con el modelo svm de la librería e1071  y varias otras funciónes que requieren transformaciónes de data. Primero se nos pide que se genere una variable que defina entre economico, caro e intermedio que ya se había hecho en hojas de trabajo pasadas. Dado que los datos máximos atípicos afectan considerablemente a una predicción, no se categorizan entre ninguna de las tres clasificaciónes por lo que se producen valores NA en nuestra variable tipoDeCasa. Para solventar este problema, eliminaremos las filas que tienen NA en la variable tipoDeCasa. Tambien es importante que las variables cuantitativas no tengan NA en ellas, por lo que las cambiamos por 0 tomando en cuenta lo que representa cada variable.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(e1071)
 library(caret)
+library(corrplot)
+
 # Load Data
+set.seed(123)
 df = read.csv("./train.csv")
 df[is.na(df)] <- 0
 df$tipoDeCasa = as.numeric(as.character( cut(df$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
 df[sapply(df, is.character)] <- lapply(df[sapply(df, is.character)],as.factor)
-frstselect <- df[,c(2:5,11:72,8,9,76:80,82)]
-set.seed(123)
+#Para borrar filas que tengan NA en una columna en especifico.
+#https://stackoverflow.com/questions/11254524/omit-rows-containing-specific-column-of-na
+completeFun <- function(data, desiredCols) {
+  completeVec <- complete.cases(data[, desiredCols])
+  return(data[completeVec, ])
+}
+df <- completeFun(df, "tipoDeCasa")
+str(df)
+#X1stFlrSF      col#44
+#BsmtFullBath   col#48
+#TotRmsAbvGrd   col#55
+#X2ndFlrSF      col#45
+#GrLivArea      col#47
+#GarageArea     col#63
 
-# Select Data
+#Separo datos con factor level > 2
+frstselect <- df[,c(2:5,8,9,11:43,46,49:54,56:62,64:72,76:80,82)]
+
+#Separo datos cuantitativos
+scndselect <- subset (df, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
+scndselect[is.na(scndselect)] <- 0
+```
+Vamos a hacer un analisis de correlación, para descartar las variables cuantitativas que tienen mucha correlación entre ellas y así facilitar la fase del modelo. Para esto, se decidió separar la base de datos en dos conjuntos de datos, ya que son muchas columnas. La primer matriz hace referencia al conjunto1, la segunda hace referencia al conjunto2, la tercera es la matriz de correlación entre conjunto1 y conjunto2. Por último tenemos una tabla comparativa que nos permite ver con mayor facilidad la correlación entre la variable tipoDeCasa y todas las demás.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Correlacion
+M <- cor(scndselect[,c(1:18)])
+M1<- cor(scndselect[,c(19:37)])
+M2<- cor(scndselect[,c(1:18)],scndselect[,c(19:37)])
+
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(M,  method = "color", col = col(200), order = "hclust", number.cex = .5,
+         addCoef.col = "black",
+         tl.col = "black",
+         sig.level = 0.50, insig = "blank", 
+         diag = FALSE)
+corrplot(M1,  method = "color", col = col(200), order = "hclust", number.cex = .5,
+         addCoef.col = "black",
+         tl.col = "black",
+         sig.level = 0.50, insig = "blank", 
+         diag = FALSE)
+corrplot(M2,  method = "color", col = col(200), order = "hclust", number.cex = .5,
+         addCoef.col = "black",
+         tl.col = "black",
+         sig.level = 0.50, insig = "blank", 
+         diag = TRUE)
+
+tipocor<- cor(scndselect[,-1],scndselect$tipoDeCasa)
+tipocor
+```
+Basandonos en la gráfica de correlación y el cuadro de correlación, las variables con mayor correlación con la variable tipoDeCasa son:
+
+- OverallQual (cuantitativa)
+- GarageCars  (cuantitativa)
+
+Tambien sabemos que las variables que tienen una correlación entre ellas mayor a 0.6 son:
+
+- TotalBsmtSF con X1stFlrSF 
+- BsmtFinSF1 con BsmtFullBath
+- X2ndFlrSF con GrLivArea con HalfBath con TotRmsAbvGrd
+- FullBath con GrLivArea
+- GarageCars con GarageArea 
+- BedroomAbvGr con TotRmsAbvGrd
+
+A continuación se verifica la correlación con la variable tipoDeCasa y se quitan las variables con menor correlación entre los conjuntos que tenían correlacion mutua, por lo tanto sacaremos a las siguientes variables:
+
+- X1stFlrSF
+- BsmtFullBath
+- TotRmsAbvGrd
+- X2ndFlrSF
+- GrLivArea
+- GarageArea
+
+## Modelo de SVM
+Uno de los principales requisitos es que los "factors" sean de al menos 2 niveles para poder ser ingresados a la función de svm.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Variables a sacar:
+#X1stFlrSF      col#44
+#BsmtFullBath   col#48
+#TotRmsAbvGrd   col#55
+#X2ndFlrSF      col#45
+#GrLivArea      col#47
+#GarageArea     col#63
+
+# Select train y test
 porciento <- 70/100
-#frstselect <- subset (df, select = -c(1,81))
+#Con todo tipo de variable
 trainRowsNumber<-sample(1:nrow(frstselect),porciento*nrow(frstselect))
 train<-frstselect[trainRowsNumber,]
 test<-frstselect[-trainRowsNumber,]
 
-modelosvm<-svm(tipoDeCasa~.,data = train, scale = F)
-summary(modelosvm)
-grafica1<-bag(modelosvm)
+#Con variables cuantitativas
+trainRowsNum<-sample(1:nrow(scndselect),porciento*nrow(scndselect))
+train1<-scndselect[trainRowsNum,]
+test1<-scndselect[-trainRowsNum,]
 
-scndselect <- subset (df, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
-scndselect[is.na(scndselect)] <- 0
-cor(scndselect[,-1],scndselect$tipoDeCasa)
-plot(grafica1,train,OverallQual~GarageCars)
+#Modelos
 
-modeloSVM_L<-svm(tipoDeCasa~., data=train, cost=2^5, kernel="linear") #98%
-modeloSVM_L<-svm(tipoDeCasa~., data=train, cost=2^-5, kernel="linear") #88%
-modeloSVM_L<-svm(tipoDeCasa~., data=train, cost=0.5, kernel="linear")#95%
-modeloSVM_R<-svm(tipoDeCasa~., data=train, gamma=2^-5, kernel="radial")
-modeloSVM_R<-svm(tipoDeCasa~., data=train, gamma=2^1, kernel="radial")
-summary(test)
-str(test)
+modeloSVM_L<-svm(tipoDeCasa~., data=train,type="C-classification", cost=1e10, kernel="linear") 
+modeloSVM_L<-svm(tipoDeCasa~., data=train,type="C-classification", cost=2^-5, kernel="linear")
+modeloSVM_L<-svm(tipoDeCasa~., data=train,type="C-classification", cost=0.5, kernel="linear")
 
-prediccionL<-predict(modeloSVM_L,newdata=test[,1:73])
-prediccionR<-predict(modeloSVM_R,newdata=test[,1:73])
+modeloSVM_R<-svm(tipoDeCasa~., data=train1,type="C-classification", gamma=2^-4,kernel="radial")
+modeloSVM_R<-svm(tipoDeCasa~., data=train1,type="C-classification", gamma=0.05,kernel="radial")
+modeloSVM_R<-svm(tipoDeCasa~., data=train1,type="C-classification", gamma=0.5,kernel="radial")
 
-#Tarda demasiado, por la cantidad de dato y costs...
-#modeloTuneado<-tune.svm(tipoDeCasa~., data=train, #cost=c(0.01,0.1,0.5,1,5,10,16,20,32), kernel="linear")
-#predMejorModelo<-predict(modeloTuneado$best.model,newdata = #test[,1:73])
+modeloSVM_P<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=0.1, kernel="polynomial", coef0=1) 
+modeloSVM_P<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=2^-5, kernel="polynomial", coef0=1)
+modeloSVM_P<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=0.5, kernel="polynomial", coef0=1)
+
+summary(modeloSVM_L)
+summary(modeloSVM_R)
+summary(modeloSVM_P)
+
+#Predicciones
+prediccionL<-predict(modeloSVM_L,newdata=test[,1:67])
+prediccionR<-predict(modeloSVM_R,newdata=test1[,1:37])
+prediccionP<-predict(modeloSVM_P,newdata=test[,1:67])
+#Cambio de tipo de data a factors
+test$tipoDeCasa<- as.factor(test$tipoDeCasa)
+test1$tipoDeCasa<- as.factor(test$tipoDeCasa)
+#Matrices de confusion
+confusionMatrix(test$tipoDeCasa,prediccionL)
+confusionMatrix(test1$tipoDeCasa,prediccionR)
+confusionMatrix(test$tipoDeCasa,prediccionP)
+
+
+
 
 
 ```
