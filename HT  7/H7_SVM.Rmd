@@ -15,7 +15,9 @@ En esta HDT se trabajara con el modelo svm de la librería e1071  y varias otras
 library(e1071)
 library(caret)
 library(corrplot)
-
+library(labelled)
+library(plotly)
+library(ggplot2)
 # Load Data
 set.seed(123)
 df = read.csv("./train.csv")
@@ -95,7 +97,7 @@ A continuación se verifica la correlación con la variable tipoDeCasa y se quit
 - GarageArea
 
 ## Modelo de SVM
-Uno de los principales requisitos es que los "factors" sean de al menos 2 niveles para poder ser ingresados a la función de svm.
+Uno de los principales requisitos es que los "factors" sean de al menos 2 niveles para poder ser ingresados a la función de svm. En totala se realizarán nueve modelos de los cuales 3 son lineles, 3 son radiales y 3 son polinomiales. Se cambiaron factores como costo, gamma, degree y coef0 para tener diferentes combinaciones que nos dieran diferentes resultados y en base a cada coonvinación, se buscaron numeros que promovieran una mayor precisión en la predicción.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Variables a sacar:
 #X1stFlrSF      col#44
@@ -119,37 +121,97 @@ test1<-scndselect[-trainRowsNum,]
 
 #Modelos
 
-modeloSVM_L<-svm(tipoDeCasa~., data=train,type="C-classification", cost=1e10, kernel="linear") 
-modeloSVM_L<-svm(tipoDeCasa~., data=train,type="C-classification", cost=2^-5, kernel="linear")
-modeloSVM_L<-svm(tipoDeCasa~., data=train,type="C-classification", cost=0.5, kernel="linear")
+modeloSVM_L1<-svm(tipoDeCasa~., data=train,type="C-classification", cost=2^5, kernel="linear") 
+modeloSVM_L2<-svm(tipoDeCasa~., data=train,type="C-classification", cost=0.5, kernel="linear")
+modeloSVM_L3<-svm(tipoDeCasa~., data=train,type="C-classification", cost=2^-5, kernel="linear")
 
-modeloSVM_R<-svm(tipoDeCasa~., data=train1,type="C-classification", gamma=2^-4,kernel="radial")
-modeloSVM_R<-svm(tipoDeCasa~., data=train1,type="C-classification", gamma=0.05,kernel="radial")
-modeloSVM_R<-svm(tipoDeCasa~., data=train1,type="C-classification", gamma=0.5,kernel="radial")
+modeloSVM_R1<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=0.005,kernel="radial")
+modeloSVM_R2<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=0.05,kernel="radial")
+modeloSVM_R3<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=2^-5,kernel="radial")
 
-modeloSVM_P<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=0.1, kernel="polynomial", coef0=1) 
-modeloSVM_P<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=2^-5, kernel="polynomial", coef0=1)
-modeloSVM_P<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=0.5, kernel="polynomial", coef0=1)
+modeloSVM_P1<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=1, kernel="polynomial", coef0=1, degree= 8) 
+modeloSVM_P2<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=5, kernel="polynomial", coef0=1)
+modeloSVM_P3<-svm(tipoDeCasa~., data=train,type="C-classification", gamma=2^-5, kernel="polynomial", coef0=1)
 
-summary(modeloSVM_L)
-summary(modeloSVM_R)
-summary(modeloSVM_P)
+summary(modeloSVM_L1)
+summary(modeloSVM_R1)
+summary(modeloSVM_P1)
 
 #Predicciones
-prediccionL<-predict(modeloSVM_L,newdata=test[,1:67])
-prediccionR<-predict(modeloSVM_R,newdata=test1[,1:37])
-prediccionP<-predict(modeloSVM_P,newdata=test[,1:67])
+prediccionL1<-predict(modeloSVM_L1,newdata=test[,1:67])
+prediccionL2<-predict(modeloSVM_L2,newdata=test[,1:67])
+prediccionL3<-predict(modeloSVM_L3,newdata=test[,1:67])
+prediccionR1<-predict(modeloSVM_R1,newdata=test[,1:67])#[,1:37]
+prediccionR2<-predict(modeloSVM_R2,newdata=test[,1:67])#[,1:37]
+prediccionR3<-predict(modeloSVM_R3,newdata=test[,1:67])#[,1:37]
+prediccionP1<-predict(modeloSVM_P1,newdata=test[,1:67])
+prediccionP2<-predict(modeloSVM_P2,newdata=test[,1:67])
+prediccionP3<-predict(modeloSVM_P3,newdata=test[,1:67])
+
 #Cambio de tipo de data a factors
 test$tipoDeCasa<- as.factor(test$tipoDeCasa)
 test1$tipoDeCasa<- as.factor(test$tipoDeCasa)
+
 #Matrices de confusion
-confusionMatrix(test$tipoDeCasa,prediccionL)
-confusionMatrix(test1$tipoDeCasa,prediccionR)
-confusionMatrix(test$tipoDeCasa,prediccionP)
+```
 
+## Matrices de confusión:
+Para esta parte hay que asegurar que ambos factores que se van a comparar que en este caso es predicción y test, es requerido que sean factores del mismo nivel, por lo que no puede haber ninún tipo de fallo en el formato de ambos factores. A continuación se pueden ver los resultados de los 9 modelos que se realizaron.
 
+#### - Matrices de confusión de modelos lineales
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cmL1<-confusionMatrix(test$tipoDeCasa,prediccionL1)
+cmL2<-confusionMatrix(test$tipoDeCasa,prediccionL2)
+cmL3<-confusionMatrix(test$tipoDeCasa,prediccionL3)
+cmL1
+cmL2
+cmL3
+```
 
+#### - Matrices de confusión de modelos radiales 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cmR1<-confusionMatrix(test$tipoDeCasa,prediccionR1)
+cmR2<-confusionMatrix(test$tipoDeCasa,prediccionR2)
+cmR3<-confusionMatrix(test$tipoDeCasa,prediccionR3)
+cmR1
+cmR2
+cmR3
+```
 
+#### - Matrices de confusión de modelos polinomiales 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cmP1<-confusionMatrix(test$tipoDeCasa,prediccionP1)
+cmP2<-confusionMatrix(test$tipoDeCasa,prediccionP2)
+cmP3<-confusionMatrix(test$tipoDeCasa,prediccionP3)
+cmP1
+cmP2
+cmP3
+#Obtener accuracy de cada una
+cmL1<-cmL1$overall[['Accuracy']]*100
+cmL2<-cmL2$overall[['Accuracy']]*100
+cmL3<-cmL3$overall[['Accuracy']]*100
+cmR1<-cmR1$overall[['Accuracy']]*100
+cmR2<-cmR2$overall[['Accuracy']]*100
+cmR3<-cmR3$overall[['Accuracy']]*100
+cmP1<-cmP1$overall[['Accuracy']]*100
+cmP2<-cmP2$overall[['Accuracy']]*100
+cmP3<-cmP3$overall[['Accuracy']]*100
+accuracycm1<- c(cmL1,cmR1,cmP1)
+accuracycm2<- c(cmL2,cmR2,cmP2)
+accuracycm3<- c(cmL3,cmR3,cmP3)
+tiposvmcm<- c("linear","radial","polinomial")
+accuracycm4<- c(cmL1,cmL2,cmL3)
+accuracycm5<- c(cmR1,cmR2,cmR3)
+accuracycm6<- c(cmP1,cmP2,cmP3)
+data <- data.frame(tiposvmcm, accuracycm1, accuracycm2, accuracycm3)
+```
 
+- En la siguiente gráfica se puede apreciar la comparación entre presiciones de los nueve modelos que se realizaron, agrupados por tipo de kernel. 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+fig <- plot_ly(data, x = ~tiposvmcm, y = ~accuracycm1, type = 'bar', name = '')
+fig <- fig %>% add_trace(y = ~accuracycm2, name = '')
+fig <- fig %>% add_trace(y = ~accuracycm3, name = '')
+fig <- fig %>% layout(title="(Accuracy vs kernel type) of SVM",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'kernel'), barmode = 'group')
+fig
 ```
 
