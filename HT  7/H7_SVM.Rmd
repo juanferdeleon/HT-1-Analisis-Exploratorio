@@ -97,7 +97,7 @@ A continuación se verifica la correlación con la variable tipoDeCasa y se quit
 - GarageArea
 
 ## Modelo de SVM
-Uno de los principales requisitos es que los "factors" sean de al menos 2 niveles para poder ser ingresados a la función de svm. En totala se realizarán nueve modelos de los cuales 3 son lineles, 3 son radiales y 3 son polinomiales. Se cambiaron factores como costo, gamma, degree y coef0 para tener diferentes combinaciones que nos dieran diferentes resultados y en base a cada coonvinación, se buscaron numeros que promovieran una mayor precisión en la predicción.
+Uno de los principales requisitos es que los "factors" sean de al menos 2 niveles para poder ser ingresados a la función de svm. En totala se realizarán nueve modelos de los cuales 3 son lineales, 3 son radiales y 3 son polinomiales. Se cambiaron factores como costo, gamma, degree y coef0 para tener diferentes combinaciones que nos dieran diferentes resultados y en base a cada combinación, se buscaron numeros que promovieran una mayor precisión en la predicción.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Variables a sacar:
 #X1stFlrSF      col#44
@@ -138,15 +138,62 @@ summary(modeloSVM_R1)
 summary(modeloSVM_P1)
 
 #Predicciones
+
+# Linear
+process_timeL1 <- proc.time()
 prediccionL1<-predict(modeloSVM_L1,newdata=test[,1:67])
+process_timeL1 <- proc.time() - process_timeL1
+process_timeL2 <- proc.time()
 prediccionL2<-predict(modeloSVM_L2,newdata=test[,1:67])
+process_timeL2 <- proc.time() - process_timeL2
+process_timeL3 <- proc.time()
 prediccionL3<-predict(modeloSVM_L3,newdata=test[,1:67])
+process_timeL3 <- proc.time() - process_timeL3
+
+process_timeL_avarage <- (process_timeL1[3] + process_timeL2[3] + process_timeL3[3])/3
+
+
+# Radial
+process_timeR1 <- proc.time()
 prediccionR1<-predict(modeloSVM_R1,newdata=test[,1:67])#[,1:37]
+process_timeR1 <- proc.time() - process_timeR1
+process_timeR2 <- proc.time()
 prediccionR2<-predict(modeloSVM_R2,newdata=test[,1:67])#[,1:37]
+process_timeR2 <- proc.time() - process_timeR2
+process_timeR3 <- proc.time()
 prediccionR3<-predict(modeloSVM_R3,newdata=test[,1:67])#[,1:37]
+process_timeR3 <- proc.time() - process_timeR3
+
+process_timeR_avarage <- (process_timeR1[3] + process_timeR2[3] + process_timeR3[3])/3
+
+# Polinomial
+process_timeP1 <- proc.time()
 prediccionP1<-predict(modeloSVM_P1,newdata=test[,1:67])
+process_timeP1 <- proc.time() - process_timeP1
+process_timeP2 <- proc.time()
 prediccionP2<-predict(modeloSVM_P2,newdata=test[,1:67])
+process_timeP2 <- proc.time() - process_timeP2
+process_timeP3 <- proc.time()
 prediccionP3<-predict(modeloSVM_P3,newdata=test[,1:67])
+process_timeP3 <- proc.time() - process_timeP3
+
+process_timeP_avarage <- (process_timeP1[3] + process_timeP2[3] + process_timeP3[3])/3
+
+```
+
+Debajo se muestra una comparacion en promedio del tiempo de ejecucionde cada uno de los modelos: 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+modelos_SVM <- c("Lineal", "Radial", "Polinomial")
+elapsed <- c(process_timeL_avarage, process_timeR_avarage, process_timeP_avarage)
+
+comparacion_elapsed <- data.frame(modelos_SVM, elapsed)
+
+fig_3 <- plot_ly(comparacion_elapsed, x = ~modelos_SVM, y = ~elapsed, type = 'bar', text = paste(signif(elapsed,digits = 3),"s"), textposition = 'auto', name = '')
+fig_3<- fig_3 %>% layout(title="Tiempo de Ejecucion vs Modelo Aplicado",yaxis = list(title = 'Time(s)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
+
+fig_3
 
 #Cambio de tipo de data a factors
 test$tipoDeCasa<- as.factor(test$tipoDeCasa)
@@ -224,12 +271,23 @@ fig
 #### Matríz de confusión Arbol de Clasificación 
 ![](./ClassificationTree.PNG)
 
+#### Comparar modelos de hojas pasadas
+
+A continuacion veremos una grafica comparativa de las precisiones obtenidas de los modelos de prediccion aplicados anteriormente, incluyendo SVM's.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+modelos_aplicados <- c("Arbol de Clasificacion","Naive Bayes","Regresion Lineal", "SVM")
+accuracy_individual <- c(73.61, 76.69, 70.05, 83.99)
+comparacion_modelos <- data.frame(modelos_aplicados, accuracy_individual)
+fig_2 <- plot_ly(comparacion_modelos, x = ~modelos_aplicados, y = ~accuracy_individual, type = 'bar', text = paste(signif(accuracy_individual,digits = 3),"%"), textposition = 'auto', name = '')
+fig_2 <- fig_2 %>% layout(title="Accuracy vs Modelo Aplicado",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
+fig_2
+```
+
 ## Discusión
 
-- comparar entre los resultados, efectividad, tiempo de procesamiento y equivocaciónes entre los svm
-- comparar modelos de hojas pasadas
 
-Al haber hecho la comparación entre cada modelo de los de la support vector machine, podemos ver que el más alto es el lineal con 84% el segundo con 83.3% en radial y el tercero en radial tambien con un 82.6%. Un dato importante es que el porcentaje de precisión más bajo es de 74.5% lo que de igual manera es una porcentaje de accuracy bastante formidable. Como conclusión no se puede determinar qué modelo es el mejor, pero sí qué modelo nos dio mejores resultados, y fue el lineal. Con resultados muy parecidos al polinomial y radial. Ahora en comparación con los otros modelos que se realizaron en hojas de trabajo anteriores, podemos también determinar que en esta hoja de trabajo obtuvo los índices de accuracy más altos a los que se ha llegado. En conclusión como se menciona anteriormente no se pudo determinar un modelo ganador ya que si se tuviera un conocimiento más amplio el tema de cada uno de los modelos que se realizaron. Posiblemente se hubiera tratado de una manera más profesional a cada variable que influye en el resultado de cada modelo, en otras palabras consideramos que se pudo haber probado miles de combinaciones por modelo(las cuales no se probaron por cuestiones de tiempo) y tener más conocimiento para poder determinar qué modelo es más eficiente para esta base de datos y en este caso en particular.
+Al haber hecho la comparación entre cada modelo de los de la support vector machine, podemos ver que el más alto es el lineal con 84% el segundo con 83.3% en radial y el tercero en radial tambien con un 82.6%. Un dato importante es que el porcentaje de precisión más bajo es de 74.5% lo que de igual manera es una porcentaje de accuracy bastante formidable. Como conclusión no se puede determinar qué modelo es el mejor, pero sí qué modelo nos dio mejores resultados, y fue el lineal. Con resultados muy parecidos al polinomial y radial. De igual manera, el tiempo de ejecucion mas bajo fue el lineal, seguido por el polinomial y por ultimo el radial. En este caso el modelo mas eficiente obtuvo un menor tiempo de ejecucion. Ahora en comparación con los otros modelos que se realizaron en hojas de trabajo anteriores, podemos también determinar que en esta hoja de trabajo obtuvo los índices de accuracy más altos a los que se ha llegado. En conclusión como se menciona anteriormente no se pudo determinar un modelo ganador ya que si se tuviera un conocimiento más amplio el tema de cada uno de los modelos que se realizaron. Posiblemente se hubiera tratado de una manera más delicada a cada variable que influye en el resultado de cada modelo, en otras palabras consideramos que se pudo haber probado miles de combinaciones por modelo(las cuales no se probaron por cuestiones de tiempo) y tener más conocimiento para poder determinar qué modelo es más eficiente para esta base de datos y en este caso en particular.
 
 
 
