@@ -208,10 +208,32 @@ data <- data.frame(tiposvmcm, accuracycm1, accuracycm2, accuracycm3)
 
 - En la siguiente gráfica se puede apreciar la comparación entre presiciones de los nueve modelos que se realizaron, agrupados por tipo de kernel. 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-fig <- plot_ly(data, x = ~tiposvmcm, y = ~accuracycm1, type = 'bar', name = '')
-fig <- fig %>% add_trace(y = ~accuracycm2, name = '')
-fig <- fig %>% add_trace(y = ~accuracycm3, name = '')
+fig <- plot_ly(data, x = ~tiposvmcm, y = ~accuracycm1, type = 'bar',text = paste(signif(accuracycm1,digits = 3),"%"), textposition = 'auto', name = '')
+fig <- fig %>% add_trace(y = ~accuracycm2, name = '',text = paste(signif(accuracycm2,digits = 3),"%"), textposition = 'auto')
+fig <- fig %>% add_trace(y = ~accuracycm3, name = '',text = paste(signif(accuracycm3,digits = 3),"%"), textposition = 'auto')
 fig <- fig %>% layout(title="(Accuracy vs kernel type) of SVM",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'kernel'), barmode = 'group')
 fig
 ```
+
+#### Matríz de confusión Naive Bayes 
+![](./NaiveBayes.PNG)
+
+#### Matríz de confusión Regression Lineal
+![](./LinearRegression.PNG)
+
+#### Matríz de confusión Arbol de Clasificación 
+![](./ClassificationTree.PNG)
+
+## Discusión
+
+- comparar entre los resultados, efectividad, tiempo de procesamiento y equivocaciónes entre los svm
+- comparar modelos de hojas pasadas
+
+Al haber hecho la comparación entre cada modelo de los de la support vector machine, podemos ver que el más alto es el lineal con 84% el segundo con 83.3% en radial y el tercero en radial tambien con un 82.6%. Un dato importante es que el porcentaje de precisión más bajo es de 74.5% lo que de igual manera es una porcentaje de accuracy bastante formidable. Como conclusión no se puede determinar qué modelo es el mejor, pero sí qué modelo nos dio mejores resultados, y fue el lineal. Con resultados muy parecidos al polinomial y radial. Ahora en comparación con los otros modelos que se realizaron en hojas de trabajo anteriores, podemos también determinar que en esta hoja de trabajo obtuvo los índices de accuracy más altos a los que se ha llegado. En conclusión como se menciona anteriormente no se pudo determinar un modelo ganador ya que si se tuviera un conocimiento más amplio el tema de cada uno de los modelos que se realizaron. Posiblemente se hubiera tratado de una manera más profesional a cada variable que influye en el resultado de cada modelo, en otras palabras consideramos que se pudo haber probado miles de combinaciones por modelo(las cuales no se probaron por cuestiones de tiempo) y tener más conocimiento para poder determinar qué modelo es más eficiente para esta base de datos y en este caso en particular.
+
+
+
+
+
+
 
