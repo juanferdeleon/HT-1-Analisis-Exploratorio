@@ -271,7 +271,6 @@ fig
 #### Matríz de confusión Arbol de Clasificación 
 ![](./ClassificationTree.PNG)
 
-
 #### Comparar modelos de hojas pasadas
 
 A continuacion veremos una grafica comparativa de las precisiones obtenidas de los modelos de prediccion aplicados anteriormente, incluyendo SVM's.
@@ -287,10 +286,6 @@ fig_2
 
 ## Discusión
 
-Tomando como referencia el modelo de la con la clasificación y el regreso lineal estos fueron los que nos dieron un una menor tasa de efectividad el que las de Naive Bayesy por último SVM.
-Las principales diferencias que podemos encontrar entre cada uno de los modelos están dentro de las matrices de confusión. Como primer modelo tenemos no hay Valles en este caso obtuvimos una crisis de 0.76 pero esta nos muestra una mejor predicción en comparación con la regresión lineal, donde obtuvimos un 0.70 de efectividad. La principal diferencia está entre la precisión de casas del tipo caro pues el modelo de regresión lineal obtuvo una mayor cantidad de errores en este caso.
-
-Ahora tomando como referencia del árbol de clasificación podemos ver que en el tipo de casa caro obtuvimos una menor cantidad de errores y eso se puede ver reflejado en la gráfica anterior sin embargo Naive Bayes sigue proporcionarnos una menor tasa de errores y mejor aproximación. La principal diferencia entre estos tres modelos y SVM, la podemos ver en los resultados de la gráfica anterior puesto que el promedio entre las entre estos tres modelos es de 73.44% en comparación al 84% que nos brinda SVM tenemos una diferencia de aproximadamente un 10% entre estos modelos, esto nos indica que SM nos brinda una mejor certeza para este set datos.
 
 Al haber hecho la comparación entre cada modelo de los de la support vector machine, podemos ver que el más alto es el lineal con 84% el segundo con 83.3% en radial y el tercero en radial tambien con un 82.6%. Un dato importante es que el porcentaje de precisión más bajo es de 74.5% lo que de igual manera es una porcentaje de accuracy bastante formidable. Como conclusión no se puede determinar qué modelo es el mejor, pero sí qué modelo nos dio mejores resultados, y fue el lineal. Con resultados muy parecidos al polinomial y radial. De igual manera, el tiempo de ejecucion mas bajo fue el lineal, seguido por el polinomial y por ultimo el radial. En este caso el modelo mas eficiente obtuvo un menor tiempo de ejecucion. Ahora en comparación con los otros modelos que se realizaron en hojas de trabajo anteriores, podemos también determinar que en esta hoja de trabajo obtuvo los índices de accuracy más altos a los que se ha llegado. En conclusión como se menciona anteriormente no se pudo determinar un modelo ganador ya que si se tuviera un conocimiento más amplio el tema de cada uno de los modelos que se realizaron. Posiblemente se hubiera tratado de una manera más delicada a cada variable que influye en el resultado de cada modelo, en otras palabras consideramos que se pudo haber probado miles de combinaciones por modelo(las cuales no se probaron por cuestiones de tiempo) y tener más conocimiento para poder determinar qué modelo es más eficiente para esta base de datos y en este caso en particular.
 
