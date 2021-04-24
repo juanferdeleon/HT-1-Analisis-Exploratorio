@@ -179,27 +179,10 @@ process_timeP3 <- proc.time() - process_timeP3
 
 process_timeP_avarage <- (process_timeP1[3] + process_timeP2[3] + process_timeP3[3])/3
 
-```
-
-Debajo se muestra una comparacion en promedio del tiempo de ejecucionde cada uno de los modelos: 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-
-modelos_SVM <- c("Lineal", "Radial", "Polinomial")
-elapsed <- c(process_timeL_avarage, process_timeR_avarage, process_timeP_avarage)
-
-comparacion_elapsed <- data.frame(modelos_SVM, elapsed)
-
-fig_3 <- plot_ly(comparacion_elapsed, x = ~modelos_SVM, y = ~elapsed, type = 'bar', text = paste(signif(elapsed,digits = 3),"s"), textposition = 'auto', name = '')
-fig_3<- fig_3 %>% layout(title="Tiempo de Ejecucion vs Modelo Aplicado",yaxis = list(title = 'Time(s)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
-
-fig_3
-
 #Cambio de tipo de data a factors
 test$tipoDeCasa<- as.factor(test$tipoDeCasa)
 test1$tipoDeCasa<- as.factor(test$tipoDeCasa)
 
-#Matrices de confusion
 ```
 
 ## Matrices de confusión:
@@ -253,15 +236,6 @@ accuracycm6<- c(cmP1,cmP2,cmP3)
 data <- data.frame(tiposvmcm, accuracycm1, accuracycm2, accuracycm3)
 ```
 
-- En la siguiente gráfica se puede apreciar la comparación entre presiciones de los nueve modelos que se realizaron, agrupados por tipo de kernel. 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-fig <- plot_ly(data, x = ~tiposvmcm, y = ~accuracycm1, type = 'bar',text = paste(signif(accuracycm1,digits = 3),"%"), textposition = 'auto', name = '')
-fig <- fig %>% add_trace(y = ~accuracycm2, name = '',text = paste(signif(accuracycm2,digits = 3),"%"), textposition = 'auto')
-fig <- fig %>% add_trace(y = ~accuracycm3, name = '',text = paste(signif(accuracycm3,digits = 3),"%"), textposition = 'auto')
-fig <- fig %>% layout(title="(Accuracy vs kernel type) of SVM",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'kernel'), barmode = 'group')
-fig
-```
-
 #### Matríz de confusión Naive Bayes 
 ![](./NaiveBayes.PNG)
 
@@ -271,8 +245,17 @@ fig
 #### Matríz de confusión Arbol de Clasificación 
 ![](./ClassificationTree.PNG)
 
-#### Comparar modelos de hojas pasadas
+#### Comparar modelos SVM
+- En la siguiente gráfica se puede apreciar la comparación entre presiciones de los nueve modelos que se realizaron, agrupados por tipo de kernel. 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+fig <- plot_ly(data, x = ~tiposvmcm, y = ~accuracycm1, type = 'bar',text = paste(signif(accuracycm1,digits = 3),"%"), textposition = 'auto', name = '')
+fig <- fig %>% add_trace(y = ~accuracycm2, name = '',text = paste(signif(accuracycm2,digits = 3),"%"), textposition = 'auto')
+fig <- fig %>% add_trace(y = ~accuracycm3, name = '',text = paste(signif(accuracycm3,digits = 3),"%"), textposition = 'auto')
+fig <- fig %>% layout(title="(Accuracy vs kernel type) of SVM",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'kernel'), barmode = 'group')
+fig
+```
 
+#### Comparar modelos de hojas pasadas
 A continuacion veremos una grafica comparativa de las precisiones obtenidas de los modelos de prediccion aplicados anteriormente, incluyendo SVM's.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -282,6 +265,21 @@ comparacion_modelos <- data.frame(modelos_aplicados, accuracy_individual)
 fig_2 <- plot_ly(comparacion_modelos, x = ~modelos_aplicados, y = ~accuracy_individual, type = 'bar', text = paste(signif(accuracy_individual,digits = 3),"%"), textposition = 'auto', name = '')
 fig_2 <- fig_2 %>% layout(title="Accuracy vs Modelo Aplicado",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
 fig_2
+```
+#### Comparar tiempos de ejecucion de cada modelo SVM
+Debajo se muestra una comparacion en promedio del tiempo de ejecucionde cada uno de los modelos: 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+modelos_SVM <- c("Lineal", "Radial", "Polinomial")
+elapsed <- c(process_timeL_avarage, process_timeR_avarage, process_timeP_avarage)
+
+comparacion_elapsed <- data.frame(modelos_SVM, elapsed)
+
+fig_3 <- plot_ly(comparacion_elapsed, x = ~modelos_SVM, y = ~elapsed, type = 'bar', text = paste(signif(elapsed,digits = 3),"s"), textposition = 'auto', name = '')
+fig_3<- fig_3 %>% layout(title="Tiempo de Ejecucion vs Modelo Aplicado",yaxis = list(title = 'Time(s)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
+
+fig_3
 ```
 
 ## Discusión
