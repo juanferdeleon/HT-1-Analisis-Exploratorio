@@ -1,0 +1,62 @@
+---
+title: "HT-8"
+author: "Juan De Leon, Maria Jose Castro, Jose Block"
+date: "4/29/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Analisis
+
+En esta hoja de trabajo se generaran dos modelos de redes neuronales que sean capaces de clasificar usando la variable de respuesta que categoriza las casas en baratas, medias y caras. Estos modelos tendran diferentes topologias y funciones de activacion. Estos modelos se utilizaran para predecir la variable de respuesta. Asimismo, se realizaran las matrices de confucion y se compararan los resultados. Seguido de esto, se realizara el mismo proceso pero para la variable SalesPrice, de manera que el algoritmo prediga el precio de las casas. 
+
+```{r echo=FALSE}
+# Librerias
+library(caret)
+library(nnet)
+library(RWeka)
+library(neural)
+library(dummy)
+library(neuralnet)
+```
+
+```{r echo=FALSE}
+porcentaje<-0.7
+datos = read.csv("./train.csv")
+set.seed(123)
+
+datos[is.na(datos)] <- 0
+datos$tipoDeCasa = as.numeric(as.character( cut(datos$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
+datos[sapply(datos, is.character)] <- lapply(datos[sapply(datos, is.character)],as.factor)
+
+#Para borrar filas que tengan NA en una columna en especifico.
+#https://stackoverflow.com/questions/11254524/omit-rows-containing-specific-column-of-na
+completeFun <- function(data, desiredCols) {
+  completeVec <- complete.cases(data[, desiredCols])
+  return(data[completeVec, ])
+}
+datos <- completeFun(datos, "tipoDeCasa")
+str(datos)
+
+#Separo datos cuantitativos
+scndselect <- subset(datos, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
+scndselect[is.na(scndselect)] <- 0
+
+corte <- sample(nrow(scndselect),nrow(scndselect)*porcentaje)
+train<-scndselect[corte,]
+test<-scndselect[-corte,]
+
+#-------------------------------------------------
+# Red Neuronal con caret
+#-------------------------------------------------
+
+modeloCaret <- train(tipoDeCasa~., data=train, method="nnet", trace=F)
+test$prediccionCaret<-predict(modeloCaret, newdata = test[,1:36])
+cfmCaret<-confusionMatrix(test$prediccionCaret,test$tipoDeCasa)
+cfmCaret
+
+
+```
