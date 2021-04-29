@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 En esta hoja de trabajo se generaran dos modelos de redes neuronales que sean capaces de clasificar usando la variable de respuesta que categoriza las casas en baratas, medias y caras. Estos modelos tendran diferentes topologias y funciones de activacion. Estos modelos se utilizaran para predecir la variable de respuesta. Asimismo, se realizaran las matrices de confucion y se compararan los resultados. Seguido de esto, se realizara el mismo proceso pero para la variable SalesPrice, de manera que el algoritmo prediga el precio de las casas. 
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE, include=FALSE}
 # Librerias
 library(caret)
 library(nnet)
@@ -23,7 +23,11 @@ library(dummy)
 library(neuralnet)
 ```
 
-```{r echo=FALSE}
+### Red Neuronal con caret
+
+A continuacion se muestra el modelo generado con caret: 
+
+```{r echo=FALSE, warning=FALSE}
 porcentaje<-0.7
 datos = read.csv("./train.csv")
 set.seed(123)
@@ -39,7 +43,6 @@ completeFun <- function(data, desiredCols) {
   return(data[completeVec, ])
 }
 datos <- completeFun(datos, "tipoDeCasa")
-str(datos)
 
 #Separo datos cuantitativos
 scndselect <- subset(datos, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
@@ -53,10 +56,44 @@ test<-scndselect[-corte,]
 # Red Neuronal con caret
 #-------------------------------------------------
 
-modeloCaret <- train(tipoDeCasa~., data=train, method="nnet", trace=F)
-test$prediccionCaret<-predict(modeloCaret, newdata = test[,1:36])
-cfmCaret<-confusionMatrix(test$prediccionCaret,test$tipoDeCasa)
+modeloCaret <- train(tipoDeCasa~., data=train, method="nnet", trace=F, linout = TRUE)
+modeloCaret
+```
+
+Seguido de esto vemos la prediccion y su matriz de confusion:
+
+```{r echo=FALSE, warning=FALSE}
+test$prediccionCaret <- predict(modeloCaret, newdata = test)
+test$prediccionCaret[] <- round(test$prediccionCaret, digits = 0)
+u <- union(test$prediccionCaret,test$tipoDeCasa)
+t <- table(factor(test$prediccionCaret, u), factor(test$tipoDeCasa, u))
+cfmCaret<-confusionMatrix(t)
 cfmCaret
 
 
 ```
+
+### Red Neuronal con NeuralNet
+
+A continuacion se muestra el modelo generado con Neural Net: 
+
+```{r echo=FALSE}
+#-------------------------------------------------
+# Red Neuronal con NeuralNet
+#-------------------------------------------------
+#Hiperbolic Tan
+tan_hip <- function(x)tanh(x)
+modelo.nn <- neuralnet(tipoDeCasa~., train[,1:37], hidden = 2, rep = 3, linear.output = TRUE, act.fct = tan_hip)
+```
+
+Seguido de esto vemos la prediccion y su matriz de confusion:
+
+```{r echo=FALSE}
+plot(modelo.nn, newdata=test[,1:37])
+test$predNeuralNet<-round(predict(modelo.nn, newdata = test[,1:37]),digits =  0)
+u <- union(test$predNeuralNet,test$tipoDeCasa)
+t <- table(factor(test$predNeuralNet, u), factor(test$tipoDeCasa, u))
+cfmNeuralNet<-confusionMatrix(t)
+cfmNeuralNet
+```
+
