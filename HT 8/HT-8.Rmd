@@ -28,13 +28,16 @@ library(neuralnet)
 A continuacion se muestra el modelo generado con caret: 
 
 ```{r echo=FALSE, warning=FALSE}
-porcentaje<-0.7
+#Obtención de datos
 datos = read.csv("./train.csv")
 set.seed(123)
 
+#División de 3 cosas
 datos[is.na(datos)] <- 0
 datos$tipoDeCasa = as.numeric(as.character( cut(datos$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
-datos[sapply(datos, is.character)] <- lapply(datos[sapply(datos, is.character)],as.factor)
+
+#As factor
+#datos[sapply(datos, #is.character)] <- #lapply(datos[sapply(datos, #is.character)],as.factor)
 
 #Para borrar filas que tengan NA en una columna en especifico.
 #https://stackoverflow.com/questions/11254524/omit-rows-containing-specific-column-of-na
@@ -48,22 +51,27 @@ datos <- completeFun(datos, "tipoDeCasa")
 scndselect <- subset(datos, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
 scndselect[is.na(scndselect)] <- 0
 
+# Red Neuronal con caret
+
+porcentaje<-0.7
 corte <- sample(nrow(scndselect),nrow(scndselect)*porcentaje)
 train<-scndselect[corte,]
 test<-scndselect[-corte,]
 
-#-------------------------------------------------
-# Red Neuronal con caret
-#-------------------------------------------------
+#modeloCaret <- train(tipoDeCasa~., data=train, method="nnet", trace=F, linout = TRUE)
+#modeloCaret
 
-modeloCaret <- train(tipoDeCasa~., data=train, method="nnet", trace=F, linout = TRUE)
-modeloCaret
+modeloCaret2 <- train(tipoDeCasa~., data=train, method="nnet",preProcess=c("scale","center"), na.action = na.omit,linout = TRUE)
+modeloCaret2
 ```
 
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE, warning=FALSE}
-test$prediccionCaret <- predict(modeloCaret, newdata = test)
+#test$prediccionCaret <- predict(modeloCaret, newdata = test)
+#test$prediccionCaret
+
+test$prediccionCaret <- predict(modeloCaret2, newdata = test)
 test$prediccionCaret[] <- round(test$prediccionCaret, digits = 0)
 u <- union(test$prediccionCaret,test$tipoDeCasa)
 t <- table(factor(test$prediccionCaret, u), factor(test$tipoDeCasa, u))
@@ -78,22 +86,20 @@ cfmCaret
 A continuacion se muestra el modelo generado con Neural Net: 
 
 ```{r echo=FALSE}
-#-------------------------------------------------
 # Red Neuronal con NeuralNet
-#-------------------------------------------------
 #Hiperbolic Tan
-tan_hip <- function(x)tanh(x)
-modelo.nn <- neuralnet(tipoDeCasa~., train[,1:37], hidden = 2, rep = 3, linear.output = TRUE, act.fct = tan_hip)
+#tan_hip <- function(x)tanh(x)
+#modelo.nn <- neuralnet(tipoDeCasa~., train[,1:37], hidden = 2, rep = 3, linear.output = TRUE, act.fct = tan_hip)
 ```
 
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE}
-plot(modelo.nn, newdata=test[,1:37])
-test$predNeuralNet<-round(predict(modelo.nn, newdata = test[,1:37]),digits =  0)
-u <- union(test$predNeuralNet,test$tipoDeCasa)
-t <- table(factor(test$predNeuralNet, u), factor(test$tipoDeCasa, u))
-cfmNeuralNet<-confusionMatrix(t)
-cfmNeuralNet
+
+#test$predNeuralNet<-round(predi#ct(modelo.nn, newdata = #test[,1:37]),digits =  0)
+#u <- union(test$predNeuralNet,t#est$tipoDeCasa)
+#t <- table(factor(test$predNeur#alNet, u), #factor(test$tipoDeCasa, u))
+#cfmNeuralNet<-confusionMatrix(t#)
+#cfmNeuralNet
 ```
 
