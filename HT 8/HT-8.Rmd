@@ -21,13 +21,14 @@ library(RWeka)
 library(neural)
 library(dummy)
 library(neuralnet)
+library(plotly)
 ```
 
 ### Red Neuronal con caret
 
 A continuacion se muestra el modelo generado con caret: 
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, include=FALSE}
 #Obtención de datos
 datos = read.csv("./train.csv")
 set.seed(123)
@@ -58,7 +59,10 @@ corte <- sample(nrow(scndselect),nrow(scndselect)*porcentaje)
 train<-scndselect[corte,]
 test<-scndselect[-corte,]
 
-modeloCaret <- train(tipoDeCasa~., data=train, method="nnet",preProcess=c("scale","center"), na.action = na.omit, linout = TRUE)
+modeloCaret <- train(tipoDeCasa~., data=train, method="nnet",preProcess=c("scale","center"), na.action = na.omit, linout = TRUE)# Por defecto el modelo usa la funcion de activacion sigmoide
+```
+
+```{r echo=FALSE}
 modeloCaret
 ```
 
@@ -80,7 +84,7 @@ A continuacion se muestra el modelo generado con NNet:
 
 ```{r echo=FALSE}
 # Red Neuronal con NNet
-modelo.nn2 <- nnet(tipoDeCasa~.,data = scndselect,subset = corte, size=25, rang=0.1, decay=5e-4, maxit=300, linout = TRUE)
+modelo.nn2 <- nnet(tipoDeCasa~.,data = scndselect,subset = corte, size=25, rang=0.1, decay=5e-4, maxit=300, linout = TRUE)# por defecto el modelo utiliza la funcion de activacion logistica
 prediccion2 <- round(predict(modelo.nn2, newdata = test[,1:37]))
 
 # Red Neuronal con NeuralNet
@@ -106,6 +110,35 @@ cfm
 #cfmNeuralNet
 ```
 
-```{r echo=FALSE}
-```
+### Comparacion de Resultados con otros modelos de clasificacion
 
+#### Matríz de confusión Naive Bayes 
+![](./NaiveBayes.PNG)
+
+#### Matríz de confusión Regression Lineal
+![](./LinearRegression.PNG)
+
+#### Matríz de confusión Arbol de Clasificación 
+![](./ClassificationTree.PNG)
+
+#### Matríz de confusión SVM
+- Modelos Lineales
+![](./CMModelosLineales.PNG)
+- Modelos Radiales
+![](./CMModelosRadiales.PNG)
+- Modelos Polinomiales
+![](./CMModelosPolinomiales.PNG)
+
+Debajo tenemos una grafica comparativa del Accuracy obtenido de los modelos utilizados para las predicciones:
+
+```{r echo=FALSE}
+modelos_prediccion <- c("Naive Bayes", "Regresion Lineal", "Arbol de Clasificacion", "SVM", "Neural Net(Caret)", "Neural Net(NNet)")
+accuracies <- c(76.69, 70.05, 73.61, 83.99, 85.85, 85.61)
+
+comparacion_prediccion <- data.frame(modelos_prediccion, accuracies)
+
+fig_1 <- plot_ly(comparacion_prediccion, x = ~modelos_prediccion, y = ~accuracies, type = 'bar', text = paste(signif(accuracies,digits = 4),"%"), textposition = 'auto', name = '')
+fig_1<- fig_1 %>% layout(title="Precision del modelo vs Modelo Aplicado",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
+
+fig_1
+```
