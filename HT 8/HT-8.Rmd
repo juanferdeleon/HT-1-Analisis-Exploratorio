@@ -58,48 +58,54 @@ corte <- sample(nrow(scndselect),nrow(scndselect)*porcentaje)
 train<-scndselect[corte,]
 test<-scndselect[-corte,]
 
-#modeloCaret <- train(tipoDeCasa~., data=train, method="nnet", trace=F, linout = TRUE)
-#modeloCaret
-
-modeloCaret2 <- train(tipoDeCasa~., data=train, method="nnet",preProcess=c("scale","center"), na.action = na.omit,linout = TRUE)
-modeloCaret2
+modeloCaret <- train(tipoDeCasa~., data=train, method="nnet",preProcess=c("scale","center"), na.action = na.omit, linout = TRUE)
+modeloCaret
 ```
 
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE, warning=FALSE}
-#test$prediccionCaret <- predict(modeloCaret, newdata = test)
-#test$prediccionCaret
 
-test$prediccionCaret <- predict(modeloCaret2, newdata = test)
+test$prediccionCaret <- predict(modeloCaret, newdata = test)
 test$prediccionCaret[] <- round(test$prediccionCaret, digits = 0)
 u <- union(test$prediccionCaret,test$tipoDeCasa)
 t <- table(factor(test$prediccionCaret, u), factor(test$tipoDeCasa, u))
 cfmCaret<-confusionMatrix(t)
 cfmCaret
-
-
 ```
 
-### Red Neuronal con NeuralNet
+### Red Neuronal con NNet
 
-A continuacion se muestra el modelo generado con Neural Net: 
+A continuacion se muestra el modelo generado con NNet: 
 
 ```{r echo=FALSE}
+# Red Neuronal con NNet
+modelo.nn2 <- nnet(tipoDeCasa~.,data = scndselect,subset = corte, size=25, rang=0.1, decay=5e-4, maxit=300, linout = TRUE)
+prediccion2 <- round(predict(modelo.nn2, newdata = test[,1:37]))
+
 # Red Neuronal con NeuralNet
-#Hiperbolic Tan
+# Hiperbolic Tan
 #tan_hip <- function(x)tanh(x)
-#modelo.nn <- neuralnet(tipoDeCasa~., train[,1:37], hidden = 2, rep = 3, linear.output = TRUE, act.fct = tan_hip)
+#modelo.nn <- neuralnet(tipoDeCasa~., train[,1:37], hidden = 2, rep = 3, linear.output = TRUE, act.fct = "logistic", algorithm="slr")
 ```
 
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE}
 
-#test$predNeuralNet<-round(predi#ct(modelo.nn, newdata = #test[,1:37]),digits =  0)
-#u <- union(test$predNeuralNet,t#est$tipoDeCasa)
-#t <- table(factor(test$predNeur#alNet, u), #factor(test$tipoDeCasa, u))
-#cfmNeuralNet<-confusionMatrix(t#)
+test$prediccion2<-prediccion2 #Se le añade al grupo de prueba el valor de la predicción
+u <- union(test$prediccion2,test$tipoDeCasa)
+t <- table(factor(test$prediccion2, u), factor(test$tipoDeCasa, u))
+cfm<-confusionMatrix(t)
+cfm
+
+#test$predNeuralNet<-round(predict(modelo.nn, newdata = test[,1:37]),digits =  0)
+#u <- union(test$predNeuralNet,test$tipoDeCasa)
+#t <- table(factor(test$predNeuralNet, u), factor(test$tipoDeCasa, u))
+#cfmNeuralNet<-confusionMatrix(t)
 #cfmNeuralNet
+```
+
+```{r echo=FALSE}
 ```
 
