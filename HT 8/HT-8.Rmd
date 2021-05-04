@@ -140,7 +140,11 @@ Tomando como referencia la accuracy De cada uno de estos modelos podemos determi
 
 Siendo este el modelo más efectivo, ahora partiendo del tiempo de ejecución podemos decir que de la librería Caret fue el más efectivo comparado con la otra librería de redes neuronales que fue bastante más complicado de efectuar y acomodar el modelo para poder hacerlo funcionar.
 
-Ahora si hablamos de tiempo de ejecución podemos determinar que efectivamente la re neuronales realizadas con Caret fueron bastante más tardar que a las algoritmos como por ejemplo Naive valles y regresé logística sin embargo fue mucho más efectiva que las dos anteriores
+Ahora si hablamos de tiempo de ejecución podemos determinar que efectivamente la re neuronales realizadas con Caret fueron bastante más tardar que a las algoritmos como por ejemplo Naive valles y regresé logística sin embargo fue mucho más efectiva que las dos anteriores.
+
+Aunque también se puede resaltar que ningún algoritmo tuvo una efectividad baja o menor al 70% dentro de todos los algoritmos utilizados únicamente las redes neuronales fueron mucho más efectivas paralizar la televisión sin embargo ninguno tuvo efectividad baja. 
+
+En este caso el algoritmo recargar recargar como el “el menos efectivo“ sería la regresión lineal, puede que esto se deba a que no es ideal para la predicción, sin embargo fue muy efectivo. 
 
 ## Variable de Respuesta "SalePrice"
 
