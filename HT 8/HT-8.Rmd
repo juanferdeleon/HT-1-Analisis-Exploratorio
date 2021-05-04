@@ -136,6 +136,12 @@ fig_1<- fig_1 %>% layout(title="Precision del modelo vs Modelo Aplicado",yaxis =
 fig_1
 ```
 
+Tomando como referencia la accuracy De cada uno de estos modelos podemos determinar que las redes neuronales realizadas por la librería de Caret fueron las más efectivas con una diferencia de 0.24% con respecto a las formas por la librería NNet. 
+
+Siendo este el modelo más efectivo, ahora partiendo del tiempo de ejecución podemos decir que de la librería Caret fue el más efectivo comparado con la otra librería de redes neuronales que fue bastante más complicado de efectuar y acomodar el modelo para poder hacerlo funcionar.
+
+Ahora si hablamos de tiempo de ejecución podemos determinar que efectivamente la re neuronales realizadas con Caret fueron bastante más tardar que a las algoritmos como por ejemplo Naive valles y regresé logística sin embargo fue mucho más efectiva que las dos anteriores
+
 ## Variable de Respuesta "SalePrice"
 
 ```{r echo=FALSE}
