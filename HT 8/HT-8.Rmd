@@ -103,11 +103,12 @@ cfm<-confusionMatrix(t)
 cfm
 ```
 
-En este caso comparando ambos modelos de clasificación podemos determinar que el mejor fue el obtenido por la librería Caret debido a que nos de una cruz y mucho más alta a la librería NNet.
+En este caso comparando ambos modelos de clasificación podemos determinar que el mejor fue el obtenido por la librería Caret debido a que nos de una accuray  mucho más alta a la librería NNet.
 
 En el caso de la librería Nnet son mucho más complicado poder ajustar la Red neuronal y los layers  correspondientes para poder tener una accuracy mucho más adecuada ya que con los mismos valores utilizados con librería de Caret son mucho más complicado obtener un accuracy si alto.
 
 Este segundo modelo tiene un nivel de producción bastante más bajo y no fue tan efectivo, como lo podemos observar como se comporta en la matriz la confusión.
+
 ### Comparacion de Resultados con otros modelos de clasificacion
 
 #### Matríz de confusión Naive Bayes 
@@ -180,3 +181,8 @@ SalePrice_predict_vs_real$accuracy[] <- (1 - abs(SalePrice_predict_vs_real$SaleP
 summary(SalePrice_predict_vs_real$accuracy)
 
 ```
+
+Por último al probar con otro modelo la variable evaluar fue el Sale price, en este caso se utilizó el precio para poder determinar como sea la producción cambiando el tipo de topología o función de qué decir utilizada. 
+
+En este caso tenemos una función de tipo entero a diferencia de el modelo anterior que se utilizaba con 01 para poder determinar la pertenencia cada grupo. 
+
