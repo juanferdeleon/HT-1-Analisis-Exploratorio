@@ -28,6 +28,8 @@ library(ggplot2)
 library(PerformanceAnalytics)
 ```
 
+Inicialmente se separan los datos cuantitativos. En base a las hojas realizadas anteriormente, se decidio por descartar las variables que tienen mucha correlacion entre si y asi facilitar la creacion de los modelos. 
+
 ## Variable de Respuesta "tipoDeCasa"
 
 ### Red Neuronal con caret
@@ -71,6 +73,8 @@ modeloCaret <- train(tipoDeCasa~., data=train, method="nnet",preProcess=c("scale
 modeloCaret
 ```
 
+Para generar el modelo se aplico el parametro de preProcess. Este nos ayudo a centrar y escalar la data. Es decir, se normalizaron todas las columnas y sus registros para que no haya disparidad en el entrenamiento del modelo y en las predicciones.
+
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE, warning=FALSE}
@@ -82,15 +86,19 @@ cfmCaret<-confusionMatrix(t)
 cfmCaret
 ```
 
+Dado que el algoritmo retornaba valores entre 0 y 3 debimos redondear estos numeros para que calleran dentro de una de nuestras clasificaciones de tipo de casa (1, 2, 3).
+
 ### Red Neuronal con NNet
 
-A continuacion se muestra el modelo generado con NNet: 
+A continuacion se muestra el modelo generado con NNet, en donde se realizo un entrenamiento con un maximo de 300 iteraciones: 
 
 ```{r echo=FALSE}
 # Red Neuronal con NNet
 modelo.nn2 <- nnet(tipoDeCasa~.,data = scndselect,subset = corte, size=25, rang=0.1, decay=5e-4, maxit=300, linout = TRUE)# por defecto el modelo utiliza la funcion de activacion logistica
 prediccion2 <- round(predict(modelo.nn2, newdata = test[,1:37]))
 ```
+
+Es importante recalcar que se realizaron unicamente 300 iteraciones, dado que de realizarse mas se podria caer en overfiting, y no se desea eso. 
 
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
@@ -138,6 +146,10 @@ fig_1
 
 ## Variable de Respuesta "SalePrice"
 
+### Red Neuronal con NNet
+
+Al predecir el valor de SalePrice nos vemos con otro nivel de dificultad, ya que debemos hacer una prediccion de multiples valores discretos. Para ello optamos por normalizar la data mediante el metodo de normalizacion Min-Max. Este metodo de normalizacion convierte cada valor en un rango entre 0 y 1. Para ello se aplica la siguiente formula: x'=(x-min(x))/(max(x)-min(x)). Luego de entrenar el modelo con la data normalizada se tuvo que desnormalizar para luego calcular el porcentage de error de cada prediccion. El porcentage de error se obtuvo de la siguiente manera: (|aprox-real|/real)*100. 
+
 ```{r echo=FALSE}
 #normalizacion Min-Max de los datos
 maxs      <- apply(train, 2, max)
@@ -160,8 +172,17 @@ SalePrice.real    <- (test_normalized$SalePrice)*(max(datos$SalePrice)-min(datos
 # Calcular el accuracy individual mediante el error
 SalePrice_predict_vs_real <- data.frame(SalePrice.predict, SalePrice.real)
 SalePrice_predict_vs_real$accuracy <- 0
-SalePrice_predict_vs_real$accuracy[] <- (1 - abs(SalePrice_predict_vs_real$SalePrice.real - SalePrice_predict_vs_real$SalePrice.predict)/SalePrice_predict_vs_real$SalePrice.real)*100
-
-summary(SalePrice_predict_vs_real$accuracy)
-
+SalePrice_predict_vs_real$accuracy[] <- (1 - abs(SalePrice_predict_vs_real$SalePrice.real - SalePrice_predict_vs_real$SalePrice.predict)/SalePrice_predict_vs_real$SalePrice.real)*100 # Se predijo el accuracy con 1 - %error
 ```
+
+Finalmente se hizo un promedio de todos los porcentajes de error restados de 1 para obtener la precision de nuestro modelo.
+
+A continuacion vemos el accuracy promedio de las predicciones de SalePrice con NNet:
+
+```{r echo=FALSE}
+mean(SalePrice_predict_vs_real$accuracy)
+```
+
+### Discucion
+
+
