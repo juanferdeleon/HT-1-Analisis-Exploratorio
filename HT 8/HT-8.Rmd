@@ -78,12 +78,20 @@ Para generar el modelo se aplico el parametro de preProcess. Este nos ayudo a ce
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE, warning=FALSE}
+process_timeC1 <- proc.time()
 test$prediccionCaret <- predict(modeloCaret, newdata = test)
+process_timeC1 <- proc.time() - process_timeC1
 test$prediccionCaret[] <- round(test$prediccionCaret, digits = 0)
 u <- union(test$prediccionCaret,test$tipoDeCasa)
 t <- table(factor(test$prediccionCaret, u), factor(test$tipoDeCasa, u))
 cfmCaret<-confusionMatrix(t)
 cfmCaret
+```
+
+Tiempo de ejecucion: 
+
+```{r echo=FALSE}
+process_timeC1
 ```
 
 Dado que el algoritmo retornaba valores entre 0 y 3 debimos redondear estos numeros para que calleran dentro de una de nuestras clasificaciones de tipo de casa (1, 2, 3).
@@ -95,7 +103,15 @@ A continuacion se muestra el modelo generado con NNet, en donde se realizo un en
 ```{r echo=FALSE}
 # Red Neuronal con NNet
 modelo.nn2 <- nnet(tipoDeCasa~.,data = scndselect,subset = corte, size=25, rang=0.1, decay=5e-4, maxit=300, linout = TRUE)# por defecto el modelo utiliza la funcion de activacion logistica
+process_timeNNet1 <- proc.time()
 prediccion2 <- round(predict(modelo.nn2, newdata = test[,1:37]))
+process_timeNNet1 <- proc.time() - process_timeNNet1
+```
+
+Tiempo de ejecucion:
+
+```{r echo=FALSE}
+process_timeNNet1
 ```
 
 Es importante recalcar que se realizaron unicamente 300 iteraciones, dado que de realizarse mas se podria caer en overfiting, y no se desea eso. 
@@ -185,4 +201,8 @@ mean(SalePrice_predict_vs_real$accuracy)
 
 ### Discucion
 
+Al comparar los resultados obtenidos con los diferentes modelos de clasificacion usando redes neuronales para estimar la variable de respuesta "tipoDeCasa" podemos ver que las redes neuronales realizadas por la librería de Caret fueron las más efectivas con un 85.85% de precision y con una diferencia de 0.24% respecto a las formas por la librería NNet con una presicion de 85.61%. No se puede determinar qué modelo es el mejor, pero sí qué modelo nos dio mejores resultados, y fue el modelo de redes neuronales con Caret. Siendo este el modelo más efectivo, ahora partiendo del tiempo de ejecución podemos decir que de la librería Caret fue el más efectivo comparado con la otra librería de redes neuronales que fue bastante más complicado de efectuar y acomodar el modelo para poder hacerlo funcionar. Ahora en comparación con los otros modelos que se realizaron en hojas de trabajo anteriores, podemos también determinar que en esta hoja de trabajo obtuvo los índices de accuracy más altos a los que se ha llegado. En conclusión como se menciona anteriormente no se pudo determinar un modelo ganador ya que si se tuviera un conocimiento más amplio el tema de cada uno de los modelos que se realizaron. Posiblemente se hubiera tratado de una manera más delicada a cada variable que influye en el resultado de cada modelo, en otras palabras consideramos que se pudo haber probado miles de combinaciones por modelo(las cuales no se probaron por cuestiones de tiempo) y tener más conocimiento para poder determinar qué modelo es más eficiente para esta base de datos y en este caso en particular.
 
+Aunque también se puede resaltar que ningún algoritmo tuvo una efectividad baja o menor al 70% dentro de todos los algoritmos utilizados únicamente las redes neuronales fueron mucho más efectivas para realizar la prediccion sin embargo ninguno tuvo efectividad extremadamente baja. 
+
+En este caso el algoritmo recargar recargar como el “el menos efectivo“ sería la regresión lineal, puede que esto se deba a que no es ideal para la predicción, sin embargo fue muy efectivo.
