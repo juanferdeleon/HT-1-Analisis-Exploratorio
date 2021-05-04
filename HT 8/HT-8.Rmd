@@ -22,7 +22,13 @@ library(neural)
 library(dummy)
 library(neuralnet)
 library(plotly)
+library(MASS)
+library(neuralnet)
+library(ggplot2)
+library(PerformanceAnalytics)
 ```
+
+## Variable de Respuesta "tipoDeCasa"
 
 ### Red Neuronal con caret
 
@@ -37,9 +43,6 @@ set.seed(123)
 datos[is.na(datos)] <- 0
 datos$tipoDeCasa = as.numeric(as.character( cut(datos$SalePrice,c(0,145000,205000,410000), labels = c(1, 2, 3))))
 
-#As factor
-#datos[sapply(datos, #is.character)] <- #lapply(datos[sapply(datos, #is.character)],as.factor)
-
 #Para borrar filas que tengan NA en una columna en especifico.
 #https://stackoverflow.com/questions/11254524/omit-rows-containing-specific-column-of-na
 completeFun <- function(data, desiredCols) {
@@ -49,9 +52,11 @@ completeFun <- function(data, desiredCols) {
 datos <- completeFun(datos, "tipoDeCasa")
 
 #Separo datos cuantitativos
-scndselect <- subset(datos, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78,82))
+scndselect <- subset(datos, select = c(2,4,5,18,19,20,21,27,35,37,38,39,44,45,46,47,48,49,50,51,52,53,55,57,60,62,63,67,68,69,70,71,72,76,77,78, 81, 82))
 scndselect[is.na(scndselect)] <- 0
+```
 
+```{r echo=FALSE, warning=FALSE, include=FALSE}
 # Red Neuronal con caret
 
 porcentaje<-0.7
@@ -69,7 +74,6 @@ modeloCaret
 Seguido de esto vemos la prediccion y su matriz de confusion:
 
 ```{r echo=FALSE, warning=FALSE}
-
 test$prediccionCaret <- predict(modeloCaret, newdata = test)
 test$prediccionCaret[] <- round(test$prediccionCaret, digits = 0)
 u <- union(test$prediccionCaret,test$tipoDeCasa)
@@ -86,11 +90,6 @@ A continuacion se muestra el modelo generado con NNet:
 # Red Neuronal con NNet
 modelo.nn2 <- nnet(tipoDeCasa~.,data = scndselect,subset = corte, size=25, rang=0.1, decay=5e-4, maxit=300, linout = TRUE)# por defecto el modelo utiliza la funcion de activacion logistica
 prediccion2 <- round(predict(modelo.nn2, newdata = test[,1:37]))
-
-# Red Neuronal con NeuralNet
-# Hiperbolic Tan
-#tan_hip <- function(x)tanh(x)
-#modelo.nn <- neuralnet(tipoDeCasa~., train[,1:37], hidden = 2, rep = 3, linear.output = TRUE, act.fct = "logistic", algorithm="slr")
 ```
 
 Seguido de esto vemos la prediccion y su matriz de confusion:
@@ -102,12 +101,6 @@ u <- union(test$prediccion2,test$tipoDeCasa)
 t <- table(factor(test$prediccion2, u), factor(test$tipoDeCasa, u))
 cfm<-confusionMatrix(t)
 cfm
-
-#test$predNeuralNet<-round(predict(modelo.nn, newdata = test[,1:37]),digits =  0)
-#u <- union(test$predNeuralNet,test$tipoDeCasa)
-#t <- table(factor(test$predNeuralNet, u), factor(test$tipoDeCasa, u))
-#cfmNeuralNet<-confusionMatrix(t)
-#cfmNeuralNet
 ```
 
 ### Comparacion de Resultados con otros modelos de clasificacion
@@ -141,4 +134,34 @@ fig_1 <- plot_ly(comparacion_prediccion, x = ~modelos_prediccion, y = ~accuracie
 fig_1<- fig_1 %>% layout(title="Precision del modelo vs Modelo Aplicado",yaxis = list(title = 'Accuracy(%)'),xaxis = list(title = 'Modelo Aplicado'), barmode = 'group')
 
 fig_1
+```
+
+## Variable de Respuesta "SalePrice"
+
+```{r echo=FALSE}
+#normalizacion Min-Max de los datos
+maxs      <- apply(train, 2, max)
+mins      <- apply(train, 2, min)
+
+datos_normalized <- as.data.frame(scale(scndselect, center = mins, scale = maxs - mins))
+train_normalized <- datos_normalized[corte, ]
+test_normalized  <- datos_normalized[-corte, ]
+
+#modelo
+modelo.nnet <- neuralnet(SalePrice~., data = train_normalized, hidden = c(7,5), threshold = 0.05, algorithm     = "rprop+")
+
+#Prediccion
+pr.nnet   <- compute(modelo.nnet,within(test_normalized,rm(SalePrice)))
+
+#Se desnormaliza los valores
+SalePrice.predict <- pr.nnet$net.result*(max(datos$SalePrice)-min(datos$SalePrice))+min(datos$SalePrice)
+SalePrice.real    <- (test_normalized$SalePrice)*(max(datos$SalePrice)-min(datos$SalePrice))+min(datos$SalePrice)
+
+# Calcular el accuracy individual mediante el error
+SalePrice_predict_vs_real <- data.frame(SalePrice.predict, SalePrice.real)
+SalePrice_predict_vs_real$accuracy <- 0
+SalePrice_predict_vs_real$accuracy[] <- (1 - abs(SalePrice_predict_vs_real$SalePrice.real - SalePrice_predict_vs_real$SalePrice.predict)/SalePrice_predict_vs_real$SalePrice.real)*100
+
+summary(SalePrice_predict_vs_real$accuracy)
+
 ```
